@@ -3,7 +3,7 @@ from flask import Flask, make_response, redirect, render_template, request
 app = Flask(__name__)
 
 def get_progress_color(progress, scale):
-    ratio = progress / scale
+    ratio = progress/scale
 
     if ratio < 0.3:
         return "#d9534f"
@@ -36,7 +36,8 @@ def get_template_fields(progress):
         "progress": progress,
         "progress_width": progress_width,
         "progress_color": get_progress_color(progress, scale),
-        "suffix": request.args.get("suffix", "%"),
+        "prefix": request.args.get("prefix", ""),
+        "suffix": request.args.get("suffix", "%"),        
     }
 
 
