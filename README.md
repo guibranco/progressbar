@@ -26,6 +26,12 @@ https://progressbar-guibranco.vercel.app/91/
 ![Progress](https://progressbar-guibranco.vercel.app/91/?title=done)
 https://progressbar-guibranco.vercel.app/91/?title=done
 
+![Progress](https://progressbar-guibranco.vercel.app/180/?scale=10&title=mark&prefix=R$&suffix=)
+https://progressbar-guibranco.vercel.app/180/?scale=10&title=mark&prefix=R$&suffix=
+
+![Progress](https://progressbar-guibranco.vercel.app/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=)
+https://progressbar-guibranco.vercel.app/420/?scale=500&title=funds&width=120&color=babaca&prefix=R$&suffix=
+
 ![Progress](https://progressbar-guibranco.vercel.app/7/?scale=10&title=mark&suffix=X)
 https://progressbar-guibranco.vercel.app/7/?scale=10&title=mark&suffix=X
 
