@@ -29,7 +29,7 @@
       {{progress}}{{suffix}}
     </text>
     <text x="{{ progress_width/2 | int + title_width }}" y="14">
-      {{progress}}{{suffix}}
+      {{prefix}}{{progress}}{{suffix}}
     </text>
   </g>
 </svg>
