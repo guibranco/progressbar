@@ -8,6 +8,10 @@ Based on [![fredericojordan/progress-bar](https://img.shields.io/badge/frederico
 
 ## Usage:
 
+This service is deployed to [Vercel](https://vercel.com) and available from the domain [progress-bar.xyz](https://progress-bar.xyz).
+
+### Examples
+
 ![Progress](https://progress-bar.xyz/28/)
 https://progress-bar.xyz/28/
 
