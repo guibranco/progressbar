@@ -1,6 +1,6 @@
 # Dynamic Progress Bar
 
-Generates a dynamic progress bar image (SVG) with Python, deployed freely in Vercel.
+Generates a dynamic progress bar image (SVG) with Python, which is deployed freely in Vercel.
 
 Based on [![fredericojordan/progress-bar](https://img.shields.io/badge/fredericojordan%2Fprogress--bar-black?style=flat&logo=github)](https://github.com/fredericojordan/progress-bar).
 
