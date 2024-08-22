@@ -1,0 +1,16 @@
+.progress-bar-flat {
+    border-radius: 0;
+    background-color: #3498db;
+    box-shadow: none;
+}
+
+.progress-bar-for-the-badges {
+    border-radius: 4px;
+    background-color: #2ecc71;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-square {
+    border-radius: 0;
+    background-color: #e74c3c;
+}
