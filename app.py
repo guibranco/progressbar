@@ -6,11 +6,11 @@ def get_progress_color(progress, scale):
     ratio = progress/scale
 
     if ratio < 0.3:
-        return "#d9534f"
+        return "d9534f"
     if ratio < 0.7:
-        return "#f0ad4e"
+        return "f0ad4e"
 
-    return "#5cb85c"
+    return "5cb85c"
 
 
 def get_template_fields(progress):
@@ -35,7 +35,7 @@ def get_template_fields(progress):
         "scale": scale,
         "progress": progress,
         "progress_width": progress_width,
-        "progress_color": get_progress_color(progress, scale),
+        "progress_color": request.args.get("progress_color", get_progress_color(progress, scale)),
         "progress_background": request.args.get("progress_background", "555"),
         "progress_number_color": request.args.get("progress_number_color", "fff"),
         "prefix": request.args.get("prefix", ""),
