@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: Dynamic Progress Bar
+description: Generates a dynamic progress bar image (SVG) using Python, which is deployed freely via Vercel.
+show_downloads: true
