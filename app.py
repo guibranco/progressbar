@@ -6,11 +6,11 @@ def get_progress_color(progress, scale):
     ratio = progress/scale
 
     if ratio < 0.3:
-        return "#d9534f"
+        return "d9534f"
     if ratio < 0.7:
-        return "#f0ad4e"
+        return "f0ad4e"
 
-    return "#5cb85c"
+    return "5cb85c"
 
 
 def get_template_fields(progress):
