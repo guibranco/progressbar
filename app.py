@@ -3,6 +3,22 @@ from flask import Flask, make_response, redirect, render_template, request
 app = Flask(__name__)
 
 def get_progress_color(progress, scale):
+    """Get the color representation of progress based on a scale.
+
+    This function calculates the ratio of progress to scale and returns a
+    color code that represents the level of progress. The color codes are
+    defined as follows: - Red ("d9534f") for progress less than 30% - Yellow
+    ("f0ad4e") for progress between 30% and 70% - Green ("5cb85c") for
+    progress of 70% or more.
+
+    Args:
+        progress (float): The current progress value.
+        scale (float): The maximum scale value to compare against.
+
+    Returns:
+        str: A hex color code representing the progress level.
+    """
+
     ratio = progress/scale
 
     if ratio < 0.3:
@@ -14,6 +30,23 @@ def get_progress_color(progress, scale):
 
 
 def get_template_fields(progress):
+    """Retrieve template fields for rendering progress information.
+
+    This function extracts various parameters from the request arguments,
+    including the title, scale, and width for the progress display. It also
+    sets default values for these parameters if they are not provided or if
+    there are errors in conversion. The function returns a dictionary
+    containing all the necessary fields to render a progress template.
+
+    Args:
+        progress (int): The current progress value to be displayed.
+
+    Returns:
+        dict: A dictionary containing the template fields, including title,
+            title width, colors, scale, progress value, and other related
+            parameters for rendering the progress template.
+    """
+
     title = request.args.get("title")
 
     scale = 100
