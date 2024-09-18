@@ -1,46 +1,58 @@
 # Dynamic Progress Bar
 
-Generates a dynamic progress bar image (SVG) with Python, which is deployed freely in Vercel.
+Generates a dynamic progress bar image (SVG) using Python, which is deployed freely via Vercel.
 
-Based on [![fredericojordan/progress-bar](https://img.shields.io/badge/fredericojordan%2Fprogress--bar-black?style=flat&logo=github)](https://github.com/fredericojordan/progress-bar).
+Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/fredericojordan%2Fprogress--bar-black?style=flat&logo=github)](https://github.com/fredericojordan/progress-bar).
 
 ---
 
-## Usage:
+## Parameters
 
-This service is deployed to [Vercel](https://vercel.com) and available from the domain [progress-bar.xyz](https://progress-bar.xyz).
+| Parameter                | Description                                                                            | Default Value         |
+|--------------------------|----------------------------------------------------------------------------------------|-----------------------|
+| `title`                  | Adds a title to the progress bar                                                       | None                  |
+| `scale`                  | The maximum value that the progress bar represents                                     | 100                   |
+| `prefix`                 | A string to add before the progress number                                              | None                  |
+| `suffix`                 | A string to add after the progress number                                               | None                  |
+| `width`                  | The width of the progress bar in pixels                                                 | 100                   |
+| `color`                  | The color of the progress bar (hex code without `#`)                                    | `00ff00` (green)      |
+| `progress_background`    | The background color of the progress bar (hex code without `#`)                         | `ffffff` (white)      |
+| `progress_number_color`  | The color of the progress number (hex code without `#`)                                 | `000000` (black)      |
+
+---
+
+## Deployment
+
+You can deploy this project to Vercel with a single click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
+
+---
+
+## Usage
+
+This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
 
 ### Examples
 
-![Progress](https://progress-bar.xyz/28/)
-https://progress-bar.xyz/28/
+Below are several examples showcasing different ways to generate progress bars.
 
-![Progress](https://progress-bar.xyz/28/?title=progress)
-https://progress-bar.xyz/28/?title=progress
+| Example Preview                                                                 | URL                                                                               |
+|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| ![Progress](https://progress-bar.xyz/28/)                                       | [https://progress-bar.xyz/28/](https://progress-bar.xyz/28/)                      |
+| ![Progress](https://progress-bar.xyz/28/?title=progress)                        | [https://progress-bar.xyz/28/?title=progress](https://progress-bar.xyz/28/?title=progress) |
+| ![Progress](https://progress-bar.xyz/58/)                                       | [https://progress-bar.xyz/58/](https://progress-bar.xyz/58/)                      |
+| ![Progress](https://progress-bar.xyz/58/?title=completed)                       | [https://progress-bar.xyz/58/?title=completed](https://progress-bar.xyz/58/?title=completed) |
+| ![Progress](https://progress-bar.xyz/91/)                                       | [https://progress-bar.xyz/91/](https://progress-bar.xyz/91/)                      |
+| ![Progress](https://progress-bar.xyz/91/?title=done)                            | [https://progress-bar.xyz/91/?title=done](https://progress-bar.xyz/91/?title=done) |
+| ![Progress](https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=)| [https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=](https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=) |
+| ![Progress](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=) | [https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=) |
+| ![Progress](https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X)           | [https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X](https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X) |
+| ![Progress](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$) | [https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$) |
+| ![Progress](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000) | [https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000) |
 
-![Progress](https://progress-bar.xyz/58/)
-https://progress-bar.xyz/58/
+---
 
-![Progress](https://progress-bar.xyz/58/?title=completed)
-https://progress-bar.xyz/58/?title=completed
+### License
 
-![Progress](https://progress-bar.xyz/91/)
-https://progress-bar.xyz/91/
-
-![Progress](https://progress-bar.xyz/91/?title=done)
-https://progress-bar.xyz/91/?title=done
-
-![Progress](https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=)
-https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=
-
-![Progress](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=)
-https://progress-bar.xyz/420/?scale=500&title=funds&width=120&color=babaca&prefix=R$&suffix=
-
-![Progress](https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X)
-https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X
-
-![Progress](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$)
-https://progress-bar.xyz/420/?scale=500&title=funds&width=120&color=babaca&suffix=$
-
-![Progress](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000)
-https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000
+This project is open-source and available under the MIT License.
