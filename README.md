@@ -8,14 +8,6 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 
 ---
 
-## Deployment
-
-You can deploy this project to Vercel with a single click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
-
----
-
 ## Usage
 
 This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
@@ -39,7 +31,7 @@ This service is deployed on [Vercel](https://vercel.com) and accessible via the 
 
 ---
 
-### Examples
+## Examples
 
 Below are several examples showcasing different ways to generate progress bars.
 
@@ -60,6 +52,14 @@ Below are several examples showcasing different ways to generate progress bars.
 | ![Progress](https://progress-bar.xyz/100/?width=100&title=Fixed+color&progress_color=ff3300) | [https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300](https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300) |
 | ![Progress](https://progress-bar.xyz/28/?show_text=false)                       | [https://progress-bar.xyz/28/?show_text=false](https://progress-bar.xyz/28/?show_text=false)      |
 | ![Progress](https://progress-bar.xyz/90/?show_text=false)                       | [https://progress-bar.xyz/90/?show_text=false](https://progress-bar.xyz/90/?show_text=false)      |
+
+---
+
+## Deployment
+
+You can deploy this project to Vercel with a single click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
 
 ---
 
