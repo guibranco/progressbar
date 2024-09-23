@@ -63,6 +63,6 @@ You can deploy this project to Vercel with a single click:
 
 ---
 
-### License
+## License
 
 This project is open-source and available under the MIT License.
