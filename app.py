@@ -64,7 +64,7 @@ def get_template_fields(progress):
     except (TypeError, ValueError):
         pass
 
-    show_text = request.args.get('show_text', default=True, type=is_it_true)    
+    show_text = request.args.get('show_text', default=True, type=is_true)    
 
     return {
         "title": title,
