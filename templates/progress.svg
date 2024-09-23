@@ -25,11 +25,13 @@
   {% endif %}
 
   <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-    <text x="{{ progress_width/2 | int + title_width }}" y="15" fill="#010101" fill-opacity=".3">
-      {{prefix}}{{progress}}{{suffix}}
-    </text>
-    <text x="{{ progress_width/2 | int + title_width }}" y="14">
-      {{prefix}}{{progress}}{{suffix}}
-    </text>
+    {% if show_text %}
+      <text x="{{ progress_width/2 | int + title_width }}" y="15" fill="#010101" fill-opacity=".3">
+        {{prefix}}{{progress}}{{suffix}}
+      </text>
+      <text x="{{ progress_width/2 | int + title_width }}" y="14">
+        {{prefix}}{{progress}}{{suffix}}
+      </text>
+    {% endif %}
   </g>
 </svg>

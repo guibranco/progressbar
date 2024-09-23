@@ -2,6 +2,9 @@ from flask import Flask, make_response, redirect, render_template, request
 
 app = Flask(__name__)
 
+def is_true(value):
+  return value.lower() == 'true'
+
 def get_progress_color(progress, scale):
     """Get the color representation of progress based on a scale.
 
@@ -61,6 +64,8 @@ def get_template_fields(progress):
     except (TypeError, ValueError):
         pass
 
+    show_text = request.args.get('show_text', default=True, type=is_true)    
+
     return {
         "title": title,
         "title_width": 10 + 6 * len(title) if title else 0,
@@ -72,9 +77,9 @@ def get_template_fields(progress):
         "progress_background": request.args.get("progress_background", "555"),
         "progress_number_color": request.args.get("progress_number_color", "fff"),
         "prefix": request.args.get("prefix", ""),
-        "suffix": request.args.get("suffix", "%"),        
+        "suffix": request.args.get("suffix", "%"),
+        "show_text": show_text,
     }
-
 
 @app.route("/<int:progress>/")
 def get_progress_svg(progress):
