@@ -2,6 +2,8 @@
 
 Generates a dynamic progress bar image (SVG) using Python, which is deployed freely via Vercel.
 
+![Progress](https://progress-bar.xyz/25/) ![Progress](https://progress-bar.xyz/50/) ![Progress](https://progress-bar.xyz/100/) 
+
 Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/fredericojordan%2Fprogress--bar-black?style=flat&logo=github)](https://github.com/fredericojordan/progress-bar).
 
 ---
