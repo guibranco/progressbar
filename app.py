@@ -72,9 +72,9 @@ def get_template_fields(progress):
         "progress_background": request.args.get("progress_background", "555"),
         "progress_number_color": request.args.get("progress_number_color", "fff"),
         "prefix": request.args.get("prefix", ""),
-        "suffix": request.args.get("suffix", "%"),        
+        "suffix": request.args.get("suffix", "%"),
+        "show_text": request.args.get("show_text", "true"),
     }
-
 
 @app.route("/<int:progress>/")
 def get_progress_svg(progress):
