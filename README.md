@@ -8,6 +8,20 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 
 ---
 
+## Deployment
+
+You can deploy this project to Vercel with a single click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
+
+---
+
+## Usage
+
+This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
+
+---
+
 ## Parameters
 
 | Parameter                | Description                                                                            | Default Value         |
@@ -24,18 +38,6 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 | `show_text`              | If should display or hide the progress text                                            | `true`                |
 
 ---
-
-## Deployment
-
-You can deploy this project to Vercel with a single click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
-
----
-
-## Usage
-
-This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
 
 ### Examples
 
