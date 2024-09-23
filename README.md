@@ -19,6 +19,7 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 | `progress_background`    | The background color of the progress bar (hex code without `#`)                        | `ffffff` (white)      |
 | `progress_number_color`  | The color of the progress number (hex code without `#`)                                | `000000` (black)      |
 | `progress_color`         | The color of the progress bar (hex code without `#`)                                   | Depends on percentage |
+| `show_text`              | If should display the progress as text                                                 | `true`                |
 
 ---
 
@@ -53,6 +54,7 @@ Below are several examples showcasing different ways to generate progress bars.
 | ![Progress](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000) | [https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000) |
 | ![Progress](https://progress-bar.xyz/100/?progress_color=ff3300) | [https://progress-bar.xyz/58/?progress_color=ff3300](https://progress-bar.xyz/58/?progress_color=ff3300) |
 | ![Progress](https://progress-bar.xyz/100/?width=100&title=Fixed+color&progress_color=ff3300) | [https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300](https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300) |
+| ![Progress](https://progress-bar.xyz/28/?show_text=false)                       | [https://progress-bar.xyz/28/](https://progress-bar.xyz/28/?show_text=false)      |
 
 ---
 
