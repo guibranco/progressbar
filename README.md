@@ -54,7 +54,8 @@ Below are several examples showcasing different ways to generate progress bars.
 | ![Progress](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000) | [https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000](https://progress-bar.xyz/58/?title=colorful&progress_background=ffc0cb&progress_number_color=000) |
 | ![Progress](https://progress-bar.xyz/100/?progress_color=ff3300) | [https://progress-bar.xyz/58/?progress_color=ff3300](https://progress-bar.xyz/58/?progress_color=ff3300) |
 | ![Progress](https://progress-bar.xyz/100/?width=100&title=Fixed+color&progress_color=ff3300) | [https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300](https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300) |
-| ![Progress](https://progress-bar.xyz/28/?show_text=false)                       | [https://progress-bar.xyz/28/](https://progress-bar.xyz/28/?show_text=false)      |
+| ![Progress](https://progress-bar.xyz/28/?show_text=false)                       | [https://progress-bar.xyz/28/?show_text=false](https://progress-bar.xyz/28/?show_text=false)      |
+| ![Progress](https://progress-bar.xyz/90/?show_text=false)                       | [https://progress-bar.xyz/90/?show_text=false](https://progress-bar.xyz/90/?show_text=false)      |
 
 ---
 
