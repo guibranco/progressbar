@@ -32,6 +32,21 @@ def get_progress_color(progress, scale):
     return "5cb85c"
 
 def get_style_fields(style):
+    """Retrieve style fields based on the specified style type.
+
+    This function returns a dictionary of style properties associated with
+    the given style name. It checks a predefined set of style templates and
+    returns the corresponding style configuration. If the specified style
+    does not exist, it returns an empty dictionary.
+
+    Args:
+        style (str): The name of the style for which to retrieve fields.
+
+    Returns:
+        dict: A dictionary containing style properties for the specified style,
+            or an empty dictionary if the style is not found.
+    """
+
     style_templates = {
         "default": {
             "title": "",
