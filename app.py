@@ -31,6 +31,39 @@ def get_progress_color(progress, scale):
 
     return "5cb85c"
 
+def get_style_fields(style):
+    style_templates = {
+        "default": {
+            "title": "",
+            "title_width": 0,
+            "title_color": "428bca",
+            "scale": 100,
+            "progress_width": 60,
+            # "progress_color": "5cb85c",
+            "progress_background": "555",
+            "progress_number_color": "fff",
+            "prefix": "",
+            "suffix": "%",
+            "show_text": True,
+            "show_shadow": True,
+            "border_radius": 4,
+        },
+        "flat": {
+        },
+        "square": {
+            "border_radius": 0,
+            "title_color": "555",
+            "progress_color": "97CA00",
+            "show_shadow": False,
+        },
+        "plastic": {
+            #
+        },
+        "for-the-badge": {
+            #
+        },
+    }
+    return style_templates.get(style) if style in style_templates else {}
 
 def get_template_fields(progress):
     """Retrieve template fields for rendering progress information.
@@ -64,22 +97,34 @@ def get_template_fields(progress):
     except (TypeError, ValueError):
         pass
 
-    show_text = request.args.get('show_text', default=True, type=is_true)    
+    show_text = request.args.get('show_text', type=is_true)    
+    show_shadow = request.args.get('show_shadow', type=is_true)
 
-    return {
+    req_params = {
         "title": title,
         "title_width": 10 + 6 * len(title) if title else 0,
-        "title_color": request.args.get("color", "428bca"),
+        "title_color": request.args.get("color"),
         "scale": scale,
         "progress": progress,
         "progress_width": progress_width,
-        "progress_color": request.args.get("progress_color", get_progress_color(progress, scale)),
-        "progress_background": request.args.get("progress_background", "555"),
-        "progress_number_color": request.args.get("progress_number_color", "fff"),
-        "prefix": request.args.get("prefix", ""),
-        "suffix": request.args.get("suffix", "%"),
+        "progress_color": request.args.get("progress_color"),
+        "progress_background": request.args.get("progress_background"),
+        "progress_number_color": request.args.get("progress_number_color"),
+        "prefix": request.args.get("prefix"),
+        "suffix": request.args.get("suffix"),
         "show_text": show_text,
+        "show_shadow": show_shadow,
+        "border_radius": request.args.get("radius"),
     }
+
+    default = get_style_fields("default")
+    style = get_style_fields(request.args.get("style"))
+    clean_req_params = {k: v for k, v in req_params.items() if v is not None}
+
+    if "progress_color" not in clean_req_params:
+        clean_req_params["progress_color"] = style.get("progress_color") or default.get("progress_color", get_progress_color(progress, scale))
+
+    return {**default, **style, **clean_req_params}
 
 @app.route("/<int:progress>/")
 def get_progress_svg(progress):
