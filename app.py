@@ -97,7 +97,7 @@ def get_template_fields(progress):
     except (TypeError, ValueError):
         pass
 
-    show_text = request.args.get('show_text', type=is_true)    
+    show_text = request.args.get('show_text', type=is_true)
     show_shadow = request.args.get('show_shadow', type=is_true)
 
     req_params = {
