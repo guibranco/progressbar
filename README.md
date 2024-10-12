@@ -28,6 +28,8 @@ This service is deployed on [Vercel](https://vercel.com) and accessible via the 
 | `progress_number_color`  | The color of the progress number (hex code without `#`)                                | `000000` (black)      |
 | `progress_color`         | The color of the progress bar (hex code without `#`)                                   | Depends on percentage |
 | `show_text`              | If should display or hide the progress text                                            | `true`                |
+| `style`                  | The badge style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge`       | `default`             |
+
 
 ---
 
@@ -52,6 +54,17 @@ Below are several examples showcasing different ways to generate progress bars.
 | ![Progress](https://progress-bar.xyz/100/?width=100&title=Fixed+color&progress_color=ff3300) | [https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300](https://progress-bar.xyz/58/?width=100&title=Fixed+color&progress_color=ff3300) |
 | ![Progress](https://progress-bar.xyz/28/?show_text=false)                       | [https://progress-bar.xyz/28/?show_text=false](https://progress-bar.xyz/28/?show_text=false)      |
 | ![Progress](https://progress-bar.xyz/90/?show_text=false)                       | [https://progress-bar.xyz/90/?show_text=false](https://progress-bar.xyz/90/?show_text=false)      |
+
+---
+
+## Styles
+
+We currently have `flat` (default) and `square` styles:
+
+| Example Preview                                                                 | URL                                                                                      |
+|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| ![Progress](https://progress-bar.xyz/100/?style=flat)                           | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)     |
+| ![Progress](https://progress-bar.xyz/100/?style=square)                         | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square) |   
 
 ---
 
