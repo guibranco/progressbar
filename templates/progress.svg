@@ -13,6 +13,36 @@
   {% endif %}
   <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="20" fill="url(#a)" />
 
+  {% if gloss %}
+    <!-- Gloss for title -->
+    <linearGradient id="title_gloss" x1="0" y1="0" x2="0" y2="0.5">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
+      <stop offset="50%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+    <rect x="0" y="0" width="{{ title_width }}" height="10" fill="url(#title_gloss)" />
+
+    <!-- Shadow for title -->
+    <linearGradient id="title_shadow" x1="0" y1="0.5" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(0,0,0,0)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0.3)" />
+    </linearGradient>
+    <rect x="0" y="10" width="{{ title_width }}" height="10" fill="url(#title_shadow)" />
+
+    <!-- Gloss for progress bar -->
+    <linearGradient id="progress_gloss" x1="0" y1="0" x2="0" y2="0.5">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.7)" />
+      <stop offset="50%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+    <rect x="{{ title_width }}" y="0" width="{{ progress_width }}" height="10" fill="url(#progress_gloss)" />
+
+    <!-- Shadow for progress bar -->
+    <linearGradient id="progress_shadow" x1="0" y1="0.5" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(0,0,0,0)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0.3)" />
+    </linearGradient>
+    <rect x="{{ title_width }}" y="10" width="{{ progress_width }}" height="10" fill="url(#progress_shadow)" />
+  {% endif %}
+
   {% if title %}
     <g fill="#{{ progress_number_color }}" text-anchor="left" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
       {% if show_shadow %}

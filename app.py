@@ -72,7 +72,12 @@ def get_style_fields(style):
             "show_shadow": False,
         },
         "plastic": {
-            #
+            "border_radius": 4,
+            "title_color": "555",
+            "progress_color": "91bc13",  # Greenish color for a plastic look
+            "progress_background": "ECEFF1",  # Light background to enhance contrast
+            "show_shadow": True,
+            "gloss": True,  # Adding a gloss effect for plastic
         },
         "for-the-badge": {
             #
@@ -156,4 +161,4 @@ def redirect_to_github():
     return redirect("https://github.com/guibranco/progressbar", code=302)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
