@@ -59,12 +59,13 @@ Below are several examples showcasing different ways to generate progress bars.
 
 ## Styles
 
-We currently have `flat` (default) and `square` styles:
+We currently have `flat` (default), `square` and `plastic` styles:
 
 | Example Preview                                                                 | URL                                                                                      |
 |---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
 | ![Progress](https://progress-bar.xyz/100/?style=flat)                           | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)     |
 | ![Progress](https://progress-bar.xyz/100/?style=square)                         | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square) |   
+| ![Progress](https://progress-bar.xyz/100/?style=plastic)                         | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic) |   
 
 ---
 

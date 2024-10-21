@@ -1,17 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="{{ title_width + progress_width }}" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+  <!-- ClipPath to constrain the shadow within the progress bar -->
+  <defs>
+    <clipPath id="progress_clip">
+      <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="20"/>
+    </clipPath>
+  </defs>
+
   <linearGradient id="a" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
 
+  <!-- Main background with consistent border radius -->
   <rect rx="{{ border_radius }}" x="0" width="{{ title_width + progress_width }}" height="20" fill="#{{ title_color }}"/>
+  
+  <!-- Progress bar background with the same border radius -->
   <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="20" fill="#{{ progress_background }}" />
+  
+  <!-- Progress fill with the same border radius to avoid sharp corners -->
   <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ [progress/scale, 1] | min * progress_width | int }}" height="20" fill="#{{ progress_color }}" />
+  
   {% if title %}
     <path fill="#{{ progress_color }}" d="M{{ title_width }} 0h4v20h-4z" />
   {% endif %}
-  <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="20" fill="url(#a)" />
+  
+  <!-- Apply the clipping path to keep everything inside the border radius -->
+  <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="20" fill="url(#a)" clip-path="url(#clip)" />
+
+  {% if gloss %}
+    <!-- Gloss for title -->
+    <linearGradient id="title_gloss" x1="0" y1="0" x2="0" y2="0.6">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.85)" />
+      <stop offset="60%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+    <rect x="0" y="0" width="{{ title_width }}" height="12" fill="url(#title_gloss)" clip-path="url(#clip)" />
+
+    <!-- Shadow for title -->
+    <linearGradient id="title_shadow" x1="0" y1="0.6" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(0,0,0,0)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0.4)" />
+    </linearGradient>
+    <rect x="0" y="12" width="{{ title_width }}" height="8" fill="url(#title_shadow)" clip-path="url(#clip)" />
+
+    <!-- Gloss for progress bar -->
+    <linearGradient id="progress_gloss" x1="0" y1="0" x2="0" y2="0.6">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.85)" />
+      <stop offset="60%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+    <rect x="{{ title_width }}" y="0" width="{{ progress_width }}" height="12" fill="url(#progress_gloss)" clip-path="url(#progress_clip)" />
+
+    <!-- Shadow for progress bar -->
+    <linearGradient id="progress_shadow" x1="0" y1="0.6" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(0,0,0,0)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0.2)" />
+    </linearGradient>
+    <rect x="{{ title_width }}" y="9" width="{{ progress_width - 1 }}" height="11" fill="url(#progress_shadow)" clip-path="url(#progress_clip)" />
+  {% endif %}
 
   {% if title %}
     <g fill="#{{ progress_number_color }}" text-anchor="left" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
