@@ -72,7 +72,7 @@ def get_style_fields(style):
             "show_shadow": False,
         },
         "plastic": {
-            "border_radius": 4,
+            "border_radius": 5,
             "title_color": "555",
             "progress_color": "91bc13",  # Greenish color for a plastic look
             "progress_background": "ECEFF1",  # Light background to enhance contrast
