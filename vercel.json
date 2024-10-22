@@ -1,6 +1,12 @@
 {
+        {
+            "src": "app.py",
     "version": 2,
+        {
+            "src": "/(.*)",
     "builds": [
+            "dest": "app.py"
+        }
         {
             "src": "app.py",
             "use": "@vercel/python"
