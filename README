@@ -1,0 +1,10 @@
+# Progress Bar Styles
+
+This application supports multiple styles for progress bars. You can select a style using the `style` query parameter in the URL.
+
+## Available Styles
+
+- **Default**: The original style of the progress bar.
+- **Flat**: A new flat design for the progress bar.
+
+To use a specific style, append `?style=flat` to your progress bar URL for the flat style.
