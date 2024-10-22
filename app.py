@@ -1,3 +1,13 @@
+from flask import Flask, request, render_template
+
+app = Flask(__name__)
+
+@app.route('/progress')
+def progress():
+    style = request.args.get('style', 'default')
+    if style not in ['default', 'flat']:
+        style = 'default'
+    return render_template(f'{style}_progress.svg')
 from flask import Flask, make_response, redirect, render_template, request
 
 app = Flask(__name__)
