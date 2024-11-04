@@ -11,5 +11,9 @@
             "src": "/(.*)",
             "dest": "app.py"
         }
+    {
+      "src": "/dashboard",
+      "dest": "templates/dashboard.html"
+    }
     ]
 }
