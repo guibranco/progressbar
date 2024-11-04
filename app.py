@@ -1,6 +1,8 @@
 from flask import Flask, make_response, redirect, render_template, request
 
+from dash import Dash
 app = Flask(__name__)
+import plotly.express as px
 
 def is_true(value):
   return value.lower() == 'true'
@@ -159,6 +161,14 @@ def get_progress_svg(progress):
 @app.route("/")
 def redirect_to_github():
     return redirect("https://github.com/guibranco/progressbar", code=302)
+
+
+# New route for the Activity Dashboard
+@app.route("/dashboard")
+def activity_dashboard():
+    # Placeholder for fetching and processing repository activity data
+    # This will be replaced with actual data fetching logic
+    return "Activity Dashboard is under construction."
 
 if __name__ == "__main__":
     app.run()
