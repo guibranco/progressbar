@@ -8,3 +8,4 @@ MarkupSafe==2.1.5
 Werkzeug==3.0.6
 dash==2.0.0
 plotly==5.3.1
+pytest==7.2.0
