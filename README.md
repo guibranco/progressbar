@@ -8,6 +8,16 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 
 ---
 
+
+## Pixeebot Activity Dashboard
+
+Introducing the Pixeebot Activity Dashboard, a comprehensive dashboard that summarizes repository activities, highlights available improvement opportunities, and provides actionable insights to maintain and enhance project quality.
+
+### Accessing the Dashboard
+
+The Activity Dashboard is accessible via the `/dashboard` route. It offers a centralized view of the project's health and progress, enabling developers to monitor ongoing and completed tasks, identify areas requiring attention or improvement, and streamline the review and feedback process.
+
+### Benefits
 ## Usage
 
 This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
