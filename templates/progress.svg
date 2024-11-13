@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="{{ title_width + progress_width }}" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+{% if mode == 'star rating' %}
+<!-- Star rating SVG content will be added here -->
   <!-- ClipPath to constrain the shadow within the progress bar -->
+{% else %}
+<svg width="{{ title_width + progress_width }}" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
   <defs>
     <clipPath id="progress_clip">
       <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="20"/>
@@ -83,4 +87,6 @@
       </text>
     {% endif %}
   </g>
+</svg>
+{% endif %}
 </svg>
