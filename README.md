@@ -8,6 +8,12 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 
 ---
 
+## Other projects
+
+- [![Star Rating](https://starrating-beta.vercel.app/5.0/)](https://github.com/GoulartNogueira/Star-Rating) Dynamic Star Rating - [![GoulartNogueira/Star-Rating](https://img.shields.io/badge/GoulartNogueira%2FStar--Rating-black?style=flat&logo=github)](https://github.com/GoulartNogueira/Star-Rating)
+
+---
+
 ## Usage
 
 This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
