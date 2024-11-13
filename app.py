@@ -1,4 +1,4 @@
-from flask import Flask, make_response, redirect, render_template, request
+from flask import Flask, make_response, redirect, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -146,6 +146,11 @@ def get_template_fields(progress):
 
     return {**default, **style, **clean_req_params}
 
+
+@app.route('/component')
+def component():
+    mode = request.args.get('mode', 'progress bar')
+    return render_template('progress.svg', mode=mode)
 @app.route("/<int:progress>/")
 def get_progress_svg(progress):
     template_fields = get_template_fields(progress)
