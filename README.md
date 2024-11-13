@@ -1,4 +1,5 @@
 # Dynamic Progress Bar
+| `mode`                   | The display mode of the component, either `progress bar` or `star rating`            | `progress bar`        |
 
 Generates a dynamic progress bar image (SVG) using Python, which is deployed freely via Vercel.
 
