@@ -105,9 +105,12 @@ def get_template_fields(progress):
 
     title = request.args.get("title")
 
+    progress_text = progress
+
     scale = 100
     try:
         scale = int(request.args.get("scale"))
+        progress_text = int(progress / scale * 100)
     except (TypeError, ValueError):
         pass
 
@@ -126,6 +129,7 @@ def get_template_fields(progress):
         "title_color": request.args.get("color"),
         "scale": scale,
         "progress": progress,
+        "progress_text": progress_text,
         "progress_width": progress_width,
         "progress_color": request.args.get("progress_color"),
         "progress_background": request.args.get("progress_background"),
