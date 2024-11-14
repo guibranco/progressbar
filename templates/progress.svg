@@ -75,11 +75,11 @@
     {% if show_text %}
       {% if show_shadow %}
       <text x="{{ progress_width/2 | int + title_width }}" y="15" fill="#010101" fill-opacity=".3">
-        {{prefix}}{{progress}}{{suffix}}
+        {{prefix}}{{progress_text}}{{suffix}}
       </text>
       {% endif %}
       <text x="{{ progress_width/2 | int + title_width }}" y="14">
-        {{prefix}}{{progress}}{{suffix}}
+        {{prefix}}{{progress_text}}{{suffix}}
       </text>
     {% endif %}
   </g>
