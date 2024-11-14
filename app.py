@@ -110,7 +110,7 @@ def get_template_fields(progress):
     scale = 100
     try:
         scale = int(request.args.get("scale"))
-        progress_text = progress / scale
+        progress_text = progress / scale * 100
     except (TypeError, ValueError):
         pass
 
