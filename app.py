@@ -8,6 +8,11 @@ def is_true(value):
 def get_progress_color(progress, scale):
     """Get the color representation of progress based on a scale.
 
+
+def calculate_percentage(current_value, scale):
+    if scale == 0:
+        return 0
+    return (current_value / scale) * 100
     This function calculates the ratio of progress to scale and returns a
     color code that represents the level of progress. The color codes are
     defined as follows: - Red ("d9534f") for progress less than 30% - Yellow
