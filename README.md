@@ -33,6 +33,7 @@ This service is deployed on [Vercel](https://vercel.com) and accessible via the 
 | `progress_background`    | The background color of the progress bar (hex code without `#`)                        | `ffffff` (white)      |
 | `progress_number_color`  | The color of the progress number (hex code without `#`)                                | `000000` (black)      |
 | `progress_color`         | The color of the progress bar (hex code without `#`)                                   | Depends on percentage |
+| `negative_progress_color` | The color of the progress bar for negative values (hex code without `#`)               | `ff0000` (red)        |
 | `show_text`              | If should display or hide the progress text                                            | `true`                |
 | `style`                  | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge`             | `default`             |
 
@@ -40,6 +41,7 @@ This service is deployed on [Vercel](https://vercel.com) and accessible via the 
 ---
 
 ## Examples
+| ![Progress](https://progress-bar.xyz/-25/)                                      | [https://progress-bar.xyz/-25/](https://progress-bar.xyz/-25/)                     |
 
 Below are several examples showcasing different ways to generate progress bars.
 
@@ -52,6 +54,7 @@ Below are several examples showcasing different ways to generate progress bars.
 | ![Progress](https://progress-bar.xyz/91/)                                       | [https://progress-bar.xyz/91/](https://progress-bar.xyz/91/)                      |
 | ![Progress](https://progress-bar.xyz/91/?title=done)                            | [https://progress-bar.xyz/91/?title=done](https://progress-bar.xyz/91/?title=done) |
 | ![Progress](https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=)| [https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=](https://progress-bar.xyz/180/?scale=10&title=mark&prefix=R$&suffix=) |
+| ![Progress](https://progress-bar.xyz/-50/?title=decline)                        | [https://progress-bar.xyz/-50/?title=decline](https://progress-bar.xyz/-50/?title=decline) |
 | ![Progress](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=) | [https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&prefix=R$&suffix=) |
 | ![Progress](https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X)           | [https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X](https://progress-bar.xyz/7/?scale=10&title=mark&suffix=X) |
 | ![Progress](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$) | [https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$](https://progress-bar.xyz/420/?scale=500&title=funds&width=200&color=babaca&suffix=$) |
