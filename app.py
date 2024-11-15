@@ -140,6 +140,7 @@ def get_template_fields(progress):
         "progress_text": progress_text,
         "progress_width": progress_width,
         "progress_color": request.args.get("progress_color"),
+        "negative_progress_color": request.args.get("negative_progress_color"),
         "progress_background": request.args.get("progress_background"),
         "progress_number_color": request.args.get("progress_number_color"),
         "prefix": request.args.get("prefix"),
@@ -154,6 +155,9 @@ def get_template_fields(progress):
     clean_req_params = {k: v for k, v in req_params.items() if v is not None}
 
     if "progress_color" not in clean_req_params:
+
+    if "negative_progress_color" not in clean_req_params:
+        clean_req_params["negative_progress_color"] = "ff0000"  # Default red for negative values
         clean_req_params["progress_color"] = style.get("progress_color") or default.get("progress_color", get_progress_color(progress, scale))
 
     return {**default, **style, **clean_req_params}
