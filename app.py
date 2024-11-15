@@ -1,8 +1,16 @@
 from flask import Flask, make_response, redirect, render_template, request
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
+@app.route('/progress')
+def progress():
+    return render_template('progress.html')
+
+
 def is_true(value):
+
+    app.add_url_rule('/progress', 'progress', progress)
   return value.lower() == 'true'
 
 def get_progress_color(progress, scale):
