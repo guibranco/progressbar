@@ -1,3 +1,13 @@
+def process_data(data):
+    for value in data:
+        if value < 0:
+            # Handle negative value
+            print("Negative value detected")
+        else:
+            # Handle positive value
+            print("Positive value detected")
+
+process_data([10, -5, 15, -20])
 from flask import Flask, make_response, redirect, render_template, request
 
 app = Flask(__name__)
