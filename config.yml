@@ -1,0 +1,5 @@
+progress_bar:
+  positive_color: "5cb85c"
+  negative_color: "d9534f"
+  direction: "ltr"
+  negative_direction: "rtl"
