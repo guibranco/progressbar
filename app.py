@@ -65,6 +65,7 @@ def get_style_fields(style):
             "scale": 100,
             "progress_width": 60,
             # "progress_color": "5cb85c",
+            "negative_progress_color": "d9534f",  # Red color for negative values
             "progress_background": "555",
             "progress_number_color": "fff",
             "prefix": "",
