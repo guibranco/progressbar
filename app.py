@@ -164,18 +164,24 @@ def get_template_fields(progress):
     # fields that need to be calculated based on other fields
 
     if "title" in clean_req_params and clean_req_params["title"] != "":
-        clean_req_params["title_width"] = style.get("title_width") + 10 + (6 * len(clean_req_params["title"])) + (len(clean_req_params["title"]) * style.get("letter_spacing", 1))
+        clean_req_params["title_width"] = (
+            style.get("title_width")
+            + 10 + (6 * len(clean_req_params["title"]))
+            + (len(clean_req_params["title"]) * style.get("letter_spacing", 1))
+        )
     else:
         clean_req_params["title_width"] = 0
-        
+
     if "progress_color" not in clean_req_params:
-        clean_req_params["progress_color"] = style.get("progress_color") or default.get("progress_color", get_progress_color(progress, scale))
+        clean_req_params["progress_color"] = style.get("progress_color") or default.get(
+            "progress_color", get_progress_color(progress, scale)
+        )
 
     if style.get("title_anchor") == "left":
         clean_req_params["title_pos_x"] = 5
         clean_req_params["title_pos_y"] = 14
     elif style.get("title_anchor") == "middle":
-        clean_req_params["title_pos_x"] = (clean_req_params.get("title_width", 0) / 2)
+        clean_req_params["title_pos_x"] = clean_req_params.get("title_width", 0) / 2
         clean_req_params["title_pos_y"] = 18
 
     return {**style, **clean_req_params}

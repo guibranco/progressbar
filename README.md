@@ -72,7 +72,7 @@ We currently have `flat` (default), `square` and `plastic` styles:
 | ![Progress](https://progress-bar.xyz/100/?style=flat)                           | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)     |
 | ![Progress](https://progress-bar.xyz/100/?style=square)                         | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square) |   
 | ![Progress](https://progress-bar.xyz/100/?style=plastic)                         | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic) |   
-| ![Progress](https://progress-bar.xyz/100/?style=for-the-badge)                         | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=for-the-badge) |
+| ![Progress](https://progress-bar.xyz/100/?style=for-the-badge)                         | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |
 
 ---
 
