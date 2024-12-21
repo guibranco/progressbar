@@ -62,6 +62,7 @@ def get_style_fields(style):
             "show_text": True,
             "show_shadow": True,
             "border_radius": 4,
+            "as_percent": False,
             "letter_spacing": 0,
             "font_size": 11,
             "height": 20,
@@ -127,7 +128,8 @@ def get_template_fields(progress):
     scale = 100
     try:
         scale = int(request.args.get("scale"))
-        progress_text = int(progress / scale * 100)
+        if request.args.get("as_percent"):
+            progress_text = int(progress / scale * 100)
     except (TypeError, ValueError):
         pass
 
