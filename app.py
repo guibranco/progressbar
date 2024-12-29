@@ -1,3 +1,13 @@
+from flask import Flask, request, render_template
+
+app = Flask(__name__)
+
+@app.route('/progress')
+def generate_progress_bar():
+    style = request.args.get('style', 'default')
+    if style == 'for-the-badge':
+        return render_template('for_the_badge.svg')
+    return render_template('default.svg')
 from flask import Flask, make_response, redirect, render_template, request
 
 app = Flask(__name__)

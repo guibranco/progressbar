@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="30">
+  <rect width="150" height="30" fill="#555"/>
+  <rect x="70" width="80" height="30" fill="#4c1"/>
+  <text x="35" y="20" fill="#fff" font-family="Verdana" font-size="12">Progress</text>
+  <text x="105" y="20" fill="#fff" font-family="Verdana" font-size="12">75%</text>
+</svg>
