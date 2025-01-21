@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="{{ title_width + progress_width }}" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+<svg width="{{ title_width + progress_width }}" height="{{height}}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
   <!-- ClipPath to constrain the shadow within the progress bar -->
   <defs>
     <clipPath id="progress_clip">
-      <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="20"/>
+      <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="100%"/>
     </clipPath>
   </defs>
 
+  {%if gradient %}
   <linearGradient id="a" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
+  {% endif %}
 
   <!-- Main background with consistent border radius -->
-  <rect rx="{{ border_radius }}" x="0" width="{{ title_width + progress_width }}" height="20" fill="#{{ title_color }}"/>
+  <rect rx="{{ border_radius }}" x="0" width="{{ title_width + progress_width }}" height="100%" fill="#{{ title_color }}"/>
   
   <!-- Progress bar background with the same border radius -->
-  <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="20" fill="#{{ progress_background }}" />
+  <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="100%" fill="#{{ progress_background }}" />
   
   <!-- Progress fill with the same border radius to avoid sharp corners -->
-  <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ [progress/scale, 1] | min * progress_width | int }}" height="20" fill="#{{ progress_color }}" />
+  <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ [progress/scale, 1] | min * progress_width | int }}" height="100%" fill="#{{ progress_color }}" />
   
   {% if title %}
-    <path fill="#{{ progress_color }}" d="M{{ title_width }} 0h4v20h-4z" />
+    <rect x="{{ title_width }}" y="0" width="4" height="100%" fill="#{{ progress_color }}" />
   {% endif %}
   
   <!-- Apply the clipping path to keep everything inside the border radius -->
-  <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="20" fill="url(#a)" clip-path="url(#clip)" />
+  <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="100%" fill="url(#a)" clip-path="url(#clip)" />
 
   {% if gloss %}
     <!-- Gloss for title -->
@@ -59,27 +61,27 @@
   {% endif %}
 
   {% if title %}
-    <g fill="#{{ progress_number_color }}" text-anchor="left" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+    <g fill="#{{ progress_number_color }}" text-anchor="{{title_anchor}}" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="{{font_size}}" letter-spacing="{{letter_spacing}}">
       {% if show_shadow %}
-      <text x="4" y="15" fill="#010101" fill-opacity=".3">
+      <text x="{{ title_pos_x }}" y="{{ title_pos_y + 1 }}" fill="#010101" fill-opacity=".3">
         {{ title }}
       </text>
       {% endif %}
-      <text x="4" y="14">
+      <text x="{{ title_pos_x }}" y="{{ title_pos_y }}">
         {{ title }}
       </text>
     </g>
   {% endif %}
 
-  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+  <g fill="#fff" text-anchor="middle"  font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="{{font_size}}" font-weight="{{progress_weight}}" letter-spacing="{{letter_spacing}}">
     {% if show_text %}
       {% if show_shadow %}
-      <text x="{{ progress_width/2 | int + title_width }}" y="15" fill="#010101" fill-opacity=".3">
-        {{prefix}}{{progress}}{{suffix}}
+      <text x="{{ progress_width/2 | int + title_width }}" y="{{ title_pos_y + 1 }}" fill="#010101" fill-opacity=".3" >
+        {{prefix}}{{progress_text}}{{suffix}}
       </text>
       {% endif %}
-      <text x="{{ progress_width/2 | int + title_width }}" y="14">
-        {{prefix}}{{progress}}{{suffix}}
+      <text x="{{ progress_width/2 | int + title_width }}" y="{{ title_pos_y }}" >
+        {{prefix}}{{progress_text}}{{suffix}}
       </text>
     {% endif %}
   </g>

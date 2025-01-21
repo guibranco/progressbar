@@ -8,6 +8,12 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 
 ---
 
+## Other projects
+
+- [![Star Rating](https://starrating-beta.vercel.app/5.0/)](https://github.com/GoulartNogueira/Star-Rating) Dynamic Star Rating - [![GoulartNogueira/Star-Rating](https://img.shields.io/badge/GoulartNogueira%2FStar--Rating-black?style=flat&logo=github)](https://github.com/GoulartNogueira/Star-Rating)
+
+---
+
 ## Usage
 
 This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
@@ -66,6 +72,7 @@ We currently have `flat` (default), `square` and `plastic` styles:
 | ![Progress](https://progress-bar.xyz/100/?style=flat)                           | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)     |
 | ![Progress](https://progress-bar.xyz/100/?style=square)                         | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square) |   
 | ![Progress](https://progress-bar.xyz/100/?style=plastic)                         | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic) |   
+| ![Progress](https://progress-bar.xyz/100/?style=for-the-badge)                         | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |
 
 ---
 

@@ -72,6 +72,14 @@ def get_style_fields(style):
             "show_text": True,
             "show_shadow": True,
             "border_radius": 4,
+            "as_percent": False,
+            "letter_spacing": 0,
+            "font_size": 11,
+            "height": 20,
+            "progress_weight": "normal",
+            "title_weight": "normal",
+            "title_anchor": "left",
+            "gradient": True,
         },
         "flat": {
         },
@@ -90,7 +98,17 @@ def get_style_fields(style):
             "gloss": True,  # Adding a gloss effect for plastic
         },
         "for-the-badge": {
-            #
+            "border_radius": 0,
+            "title_width": 10,
+            "title_color": "555",
+            "progress_weight": "bold",
+            "progress_color": "97ca00",
+            "show_shadow": False,
+            "letter_spacing": 2,
+            "font_size": 10,
+            "height": 28,
+            "title_anchor": "middle",
+            "gradient": False,
         },
     }
     return style_templates.get(style) if style in style_templates else {}
@@ -115,9 +133,13 @@ def get_template_fields(progress):
 
     title = request.args.get("title")
 
+    progress_text = progress
+
     scale = 100
     try:
         scale = int(request.args.get("scale"))
+        if request.args.get("as_percent"):
+            progress_text = int(progress / scale * 100)
     except (TypeError, ValueError):
         pass
 
@@ -132,10 +154,10 @@ def get_template_fields(progress):
 
     req_params = {
         "title": title,
-        "title_width": 10 + 6 * len(title) if title else 0,
         "title_color": request.args.get("color"),
         "scale": scale,
         "progress": progress,
+        "progress_text": progress_text,
         "progress_width": progress_width,
         "progress_color": request.args.get("progress_color"),
         "progress_background": request.args.get("progress_background"),
@@ -148,13 +170,33 @@ def get_template_fields(progress):
     }
 
     default = get_style_fields("default")
-    style = get_style_fields(request.args.get("style"))
+    style = {**default, **get_style_fields(request.args.get("style"))}
     clean_req_params = {k: v for k, v in req_params.items() if v is not None}
 
-    if "progress_color" not in clean_req_params:
-        clean_req_params["progress_color"] = style.get("progress_color") or default.get("progress_color", get_progress_color(progress, scale))
+    # fields that need to be calculated based on other fields
 
-    return {**default, **style, **clean_req_params}
+    if "title" in clean_req_params and clean_req_params["title"] != "":
+        clean_req_params["title_width"] = (
+            style.get("title_width")
+            + 10 + (6 * len(clean_req_params["title"]))
+            + (len(clean_req_params["title"]) * style.get("letter_spacing", 1))
+        )
+    else:
+        clean_req_params["title_width"] = 0
+
+    if "progress_color" not in clean_req_params:
+        clean_req_params["progress_color"] = style.get("progress_color") or default.get(
+            "progress_color", get_progress_color(progress, scale)
+        )
+
+    if style.get("title_anchor") == "left":
+        clean_req_params["title_pos_x"] = 5
+        clean_req_params["title_pos_y"] = 14
+    elif style.get("title_anchor") == "middle":
+        clean_req_params["title_pos_x"] = clean_req_params.get("title_width", 0) / 2
+        clean_req_params["title_pos_y"] = 18
+
+    return {**style, **clean_req_params}
 
 @app.route("/<int:progress>/")
 def get_progress_svg(progress):
