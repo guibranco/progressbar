@@ -142,6 +142,30 @@ def get_style_fields(style):
     }
     return style_templates.get(style, {})
 
+
+def parse_scale(args):
+    try:
+        scale = int(args.get("scale", 100))
+        if scale < 1:
+            raise ValueError
+    except (TypeError, ValueError):
+        return 100
+    return scale
+
+
+def parse_progress_width(args, title):
+    default = 60 if title else 90
+    try:
+        width = int(args.get("width"))
+        if title and not (10 <= width <= 100):
+            raise ValueError
+        if not title and not (90 <= width <= 300):
+            raise ValueError
+    except (TypeError, ValueError):
+        return default
+    return width
+
+
 def get_template_fields(progress):
     """Retrieve template fields for rendering progress information.
 
@@ -162,34 +186,11 @@ def get_template_fields(progress):
 
     title = request.args.get("title")
 
-    progress_text = progress
+    scale = parse_scale(request.args)
 
-    scale = 100 # Default scale
-
-    try:
-        scale = int(request.args.get("scale", 100)) # Default to 100 if missing
-        if scale < 1:
-            raise ValueError
-    except (TypeError, ValueError):
-        scale = 100
-
-    if request.args.get("as_percent"):
-        progress_text = f"{int(progress / scale * 100)}%" # Format as percentage
-
-
-
-    progress_width = 60 if title else 90 # Default values
-
-    try:
-        progress_width = int(request.args.get("width"))
-
-        if title and not (10 <= progress_width <= 100): # Ensure valid range
-                raise ValueError
-        if not title and not (90 <= progress_width <= 300): # Ensure valid range
-                raise ValueError
-        
-    except (TypeError, ValueError):
-        progress_width = 60 if title else 90  # Reset to default on error
+    progress_text = f"{int(progress / scale * 100)}%" if request.args.get("as_percent") else progress
+    
+    progress_width = parse_progress_width(request.args, title)
 
 
     show_text = request.args.get('show_text', type=is_true)
