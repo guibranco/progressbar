@@ -25,7 +25,7 @@ def get_progress_color(progress, scale):
     """
     if scale == 0:
         return "d9534f" # Default to red if scale is 0 (avoiding division by zero)
-    
+
     ratio = progress/scale
 
     if ratio < 0.3:
@@ -189,7 +189,7 @@ def get_template_fields(progress):
     scale = parse_scale(request.args)
 
     progress_text = f"{int(progress / scale * 100)}%" if request.args.get("as_percent") else progress
-    
+
     progress_width = parse_progress_width(request.args, title)
 
 
