@@ -55,8 +55,7 @@ def get_style_fields(style):
       return {}
 
     # Handles case sensitivity
-    style = style.lower()
-
+    style = style.lower() if style is not None else "default"
     style_templates = {
         "default": {
             "title": "",
