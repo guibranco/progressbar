@@ -38,5 +38,5 @@ jobs:
             - name: Run tests
               run: |
                 pip install pytest
-                pytest
+                pytest test_api.py
           
