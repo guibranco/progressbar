@@ -98,11 +98,79 @@ Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this p
 ### Contributors
 
 <!-- readme: collaborators,contributors,snyk-bot/- -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/guibranco">
+                    <img src="https://avatars.githubusercontent.com/u/3362854?v=4" width="100;" alt="guibranco"/>
+                    <br />
+                    <sub><b>Guilherme Branco Stracini</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/ztest95">
+                    <img src="https://avatars.githubusercontent.com/u/110767420?v=4" width="100;" alt="ztest95"/>
+                    <br />
+                    <sub><b>ztest95</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Pointbr8ker-123">
+                    <img src="https://avatars.githubusercontent.com/u/153815372?v=4" width="100;" alt="Pointbr8ker-123"/>
+                    <br />
+                    <sub><b>David Nwosu</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/EduardoBaptista01">
+                    <img src="https://avatars.githubusercontent.com/u/65791384?v=4" width="100;" alt="EduardoBaptista01"/>
+                    <br />
+                    <sub><b>EduardoBaptista01</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/bhosley">
+                    <img src="https://avatars.githubusercontent.com/u/22378319?v=4" width="100;" alt="bhosley"/>
+                    <br />
+                    <sub><b>bhosley</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: collaborators,contributors,snyk-bot/- -end -->
 
 ### Bots
 
 <!-- readme: bots,snyk-bot -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/dependabot[bot]">
+                    <img src="https://avatars.githubusercontent.com/in/29110?v=4" width="100;" alt="dependabot[bot]"/>
+                    <br />
+                    <sub><b>dependabot[bot]</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/penify-dev[bot]">
+                    <img src="https://avatars.githubusercontent.com/in/399279?v=4" width="100;" alt="penify-dev[bot]"/>
+                    <br />
+                    <sub><b>penify-dev[bot]</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/snyk-bot">
+                    <img src="https://avatars.githubusercontent.com/u/19733683?v=4" width="100;" alt="snyk-bot"/>
+                    <br />
+                    <sub><b>Snyk bot</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: bots,snyk-bot -end -->
 
 ---
