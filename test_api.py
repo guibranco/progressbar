@@ -7,7 +7,7 @@ def client():
         yield client
 
 def test_svg_response(client):
-    response = client.get("/svg")
+    response = client.get("/28/")
 
     assert response.status_code == 200
 
