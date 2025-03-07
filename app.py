@@ -14,6 +14,8 @@ def get_progress_color(progress, scale):
     ("f0ad4e") for progress between 30% and 70% - Green ("5cb85c") for
     progress of 70% or more.
 
+    If scale is 0, the function returns "d9534f"(red) by default to indicate no progress and avoid a zero division error.
+
     Args:
         progress (float): The current progress value.
         scale (float): The maximum scale value to compare against.
@@ -21,6 +23,8 @@ def get_progress_color(progress, scale):
     Returns:
         str: A hex color code representing the progress level.
     """
+    if scale == 0:
+        return "d9534f" # Default to red if scale is 0 (avoiding division by zero)
 
     ratio = progress/scale
 
@@ -46,6 +50,9 @@ def get_style_fields(style):
         dict: A dictionary containing style properties for the specified style,
             or an empty dictionary if the style is not found.
     """
+
+    # Handles case sensitivity
+    style = style.lower()
 
     style_templates = {
         "default": {
@@ -100,8 +107,64 @@ def get_style_fields(style):
             "title_anchor": "middle",
             "gradient": False,
         },
+        "thin-rounded": {
+            "border_radius": 10,  # Fully rounded corners
+            "progress_width": 40,  # Thinner progress bar
+            "height": 10,  # Reduced height for a sleek look
+            "progress_color": "4CAF50",  # Soft green
+            "progress_background": "DDD",  # Light gray background
+            "title_color": "333",  # Darker title text for contrast
+            "font_size": 10,  # Smaller font for balance
+            "show_shadow": False,
+        },
+        "neo-glass": {
+            "border_radius": 6,
+            "progress_width": 60,
+            "height": 18,
+            "progress_color": "6a11cb",  # Gradient effect (purple-blue)
+            "progress_background": "2575fc",
+            "title_color": "fff",
+            "font_size": 12,
+            "show_shadow": True,
+            "gradient": True,  # Enables smooth gradient blending
+        },
+        "minimal-matte": {
+            "border_radius": 2,  # Subtle rounding
+            "progress_width": 50,
+            "height": 14,
+            "progress_color": "333",  # Dark gray for a matte feel
+            "progress_background": "EEE",  # Light gray background
+            "title_color": "000",  # Black title for high contrast
+            "font_size": 11,
+            "letter_spacing": 1,
+            "show_shadow": False,  # Completely flat design
+        }
     }
-    return style_templates.get(style) if style in style_templates else {}
+    return style_templates.get(style, {})
+
+
+def parse_scale(args):
+    try:
+        scale = int(args.get("scale", 100))
+        if scale < 1:
+            raise ValueError
+    except (TypeError, ValueError):
+        return 100
+    return scale
+
+
+def parse_progress_width(args, title):
+    default = 60 if title else 90
+    try:
+        width = int(args.get("width"))
+        if title and not (10 <= width <= 100):
+            raise ValueError
+        if not title and not (90 <= width <= 300):
+            raise ValueError
+    except (TypeError, ValueError):
+        return default
+    return width
+
 
 def get_template_fields(progress):
     """Retrieve template fields for rendering progress information.
@@ -123,21 +186,12 @@ def get_template_fields(progress):
 
     title = request.args.get("title")
 
-    progress_text = progress
+    scale = parse_scale(request.args)
 
-    scale = 100
-    try:
-        scale = int(request.args.get("scale"))
-        if request.args.get("as_percent"):
-            progress_text = int(progress / scale * 100)
-    except (TypeError, ValueError):
-        pass
+    progress_text = f"{int(progress / scale * 100)}%" if request.args.get("as_percent") else progress
 
-    progress_width = 60 if title else 90
-    try:
-        progress_width = int(request.args.get("width"))
-    except (TypeError, ValueError):
-        pass
+    progress_width = parse_progress_width(request.args, title)
+
 
     show_text = request.args.get('show_text', type=is_true)
     show_shadow = request.args.get('show_shadow', type=is_true)
