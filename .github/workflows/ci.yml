@@ -32,6 +32,33 @@ jobs:
               with:
                   useConfigFile: true
 
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+            - name: Cache pip dependencies
+              uses: actions/cache@v3
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+                restore-keys: |
+                  ${{ runner.os }}-pip-
+            
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+      
+            - name: Run linting
+              run: |
+                pip install flake8
+                flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+            - name: Run tests
+              run: |
+                pip install pytest
+                pytest test_api.py
+
     create_release:
         name: Create release
         needs: [build-tests]
