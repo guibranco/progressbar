@@ -51,6 +51,9 @@ def get_style_fields(style):
             or an empty dictionary if the style is not found.
     """
 
+    if not style:
+      return {}
+
     # Handles case sensitivity
     style = style.lower()
 
