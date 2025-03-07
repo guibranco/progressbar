@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# This script generates an AI-powered commit message using dotnet-aicommitmessage.  
+# It can be bypassed by setting the GIT_AICOMMIT_SKIP environment variable.  
+
+# Exit immediately if GIT_AICOMMIT_SKIP is set  
+if [ -n "$GIT_AICOMMIT_SKIP" ]; then  
+    exit 0  
+fi  
+
+if ! command -v dotnet-aicommitmessage &> /dev/null; then
+    echo "Error: dotnet-aicommitmessage is not installed or not in PATH" >&2
+    echo "Please install it by running 'dotnet tool install -g aicommitmessage'" >&2
+    exit 1 
+fi
+
+COMMIT_MSG_FILE=$1
+GIT_DIFF=$(git diff --staged)
+GIT_BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+CURRENT_MESSAGE=$(cat "$COMMIT_MSG_FILE")
+
+# Run dotnet-aicommitmessage with error handling  
+if ! AI_MESSAGE=$(dotnet-aicommitmessage generate-message -m "$CURRENT_MESSAGE" -b "$GIT_BRANCH_NAME" -d "$GIT_DIFF" ); then  
+    echo "Error: Failed to generate AI commit message. Using original message." >&2  
+    exit 0  
+fi
+
+if [[ -z "$AI_MESSAGE" || "$AI_MESSAGE" =~ ^[[:space:]]*$ ]]; then  
+    echo "Error: Generated commit message is empty." >&2  
+    exit 1  
+fi  
+echo "$AI_MESSAGE" > "$COMMIT_MSG_FILE" 
+exit 0
