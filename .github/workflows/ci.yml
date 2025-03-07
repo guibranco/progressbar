@@ -1,0 +1,53 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    build-tests:
+        name: Build and Test
+        runs-on: ubuntu-latest
+        outputs:
+            semVer: ${{ steps.gitversion.outputs.semVer }}
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Install GitVersion
+              uses: gittools/actions/gitversion/setup@v3
+              with:
+                  versionSpec: '5.x'
+
+            - name: Determine Version
+              id: gitversion
+              uses: gittools/actions/gitversion/execute@v3
+              with:
+                  useConfigFile: true
+
+    create_release:
+        name: Create release
+        needs: [build-tests]
+        env:
+            SEMVER: ${{ needs.build-tests.outputs.semVer }}
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Create Release
+              uses: ncipollo/release-action@v1.16.0
+              with:
+                  skipIfReleaseExists: true
+                  allowUpdates: false
+                  draft: false
+                  makeLatest: true
+                  tag: v${{ env.SEMVER }}
+                  name: Release v${{ env.SEMVER }}
+                  generateReleaseNotes: true
+                  body: Release ${{ env.SEMVER }} of ${{ github.repository }}
