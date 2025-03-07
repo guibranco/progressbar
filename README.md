@@ -65,14 +65,21 @@ Below are several examples showcasing different ways to generate progress bars.
 
 ## Styles
 
-We currently have `flat` (default), `square`, `plastic`, and `for-the-badge` styles:
+We currently have `flat` (default), `square`, `plastic`, `for-the-badge`, `thin-rounded`, `neo-glass`, and `minimal-matte` styles:
 
 | Example Preview                                                | URL                                                                                                    |
 |----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | ![Progress](https://progress-bar.xyz/100/?style=flat)          | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)                   |
 | ![Progress](https://progress-bar.xyz/100/?style=square)        | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square)               |   
 | ![Progress](https://progress-bar.xyz/100/?style=plastic)       | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic)             |   
-| ![Progress](https://progress-bar.xyz/100/?style=for-the-badge) | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |
+| ![Progress](https://progress-bar.xyz/100/?style=for-the-badge) | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |    
+| ![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
+| ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
+| ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
+
+- thin-rounded**: A sleek, rounded progress bar with a minimalist feel.
+- **neo-glass**: A modern glass-like effect with transparency.
+- **minimal-matte**: A clean, soft matte finish.
 
 ---
 
