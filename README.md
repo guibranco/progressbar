@@ -91,6 +91,22 @@ You can deploy this project to Vercel with a single click:
 
 ---
 
+## Contributing
+
+Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this project!
+
+### Contributors
+
+<!-- readme: collaborators,contributors,snyk-bot/- -start -->
+<!-- readme: collaborators,contributors,snyk-bot/- -end -->
+
+### Bots
+
+<!-- readme: bots,snyk-bot -start -->
+<!-- readme: bots,snyk-bot -end -->
+
+---
+
 ## License
 
 This project is open-source and available under the MIT License.
