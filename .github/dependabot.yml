@@ -1,0 +1,30 @@
+version: 2
+
+updates:
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 50
+  assignees: 
+    - "guibranco"
+  reviewers: 
+    - "guibranco"
+  labels:
+    - "github-actions"
+    - "dependencies"
+
+- package-ecosystem: "pip"
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 50
+  assignees: 
+    - "guibranco"
+  reviewers: 
+    - "guibranco"
+  labels:
+    - "python"
+    - "pip"
+    - "dependencies"
