@@ -1,49 +1,48 @@
-# Dynamic Progress Bar
+# 🚀 Dynamic Progress Bar
 
-Generates a dynamic progress bar image (SVG) using Python, which is deployed freely via Vercel.
+Generates a **dynamic progress bar image** (SVG) using **Python**, deployed freely via **Vercel**.
 
-![Progress](https://progress-bar.xyz/25/) ![Progress](https://progress-bar.xyz/50/) ![Progress](https://progress-bar.xyz/100/) 
+📊 **Preview:**
+
+![Progress](https://progress-bar.xyz/25/) ![Progress](https://progress-bar.xyz/50/) ![Progress](https://progress-bar.xyz/100/)
 
 Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/fredericojordan%2Fprogress--bar-black?style=flat&logo=github)](https://github.com/fredericojordan/progress-bar).
 
 ---
 
-## Other projects
+## 🔥 Other Projects
 
-- [![Star Rating](https://starrating-beta.vercel.app/5.0/)](https://github.com/GoulartNogueira/Star-Rating) Dynamic Star Rating - [![GoulartNogueira/Star-Rating](https://img.shields.io/badge/GoulartNogueira%2FStar--Rating-black?style=flat&logo=github)](https://github.com/GoulartNogueira/Star-Rating)
-
----
-
-## Usage
-
-This service is deployed on [Vercel](https://vercel.com) and accessible via the domain [progress-bar.xyz](https://progress-bar.xyz).
+- ⭐ [![Star Rating](https://starrating-beta.vercel.app/5.0/)](https://github.com/GoulartNogueira/Star-Rating) **Dynamic Star Rating** - [![GoulartNogueira/Star-Rating](https://img.shields.io/badge/GoulartNogueira%2FStar--Rating-black?style=flat&logo=github)](https://github.com/GoulartNogueira/Star-Rating)
 
 ---
 
-## Parameters
+## 🛠️ Usage
 
-| Parameter                | Description                                                                            | Default Value         |
-|--------------------------|----------------------------------------------------------------------------------------|-----------------------|
-| `title`                  | Adds a title to the progress bar                                                       | None                  |
-| `scale`                  | The maximum value that the progress bar represents                                     | 100                   |
-| `prefix`                 | A string to add before the progress number                                             | None                  |
-| `suffix`                 | A string to add after the progress number                                              | %                     |
-| `width`                  | The width of the progress bar in pixels                                                | 100                   |
-| `color`                  | The color of the progress bar (hex code without `#`)                                   | `00ff00` (green)      |
-| `progress_background`    | The background color of the progress bar (hex code without `#`)                        | `ffffff` (white)      |
-| `progress_number_color`  | The color of the progress number (hex code without `#`)                                | `000000` (black)      |
-| `progress_color`         | The color of the progress bar (hex code without `#`)                                   | Depends on percentage |
-| `show_text`              | If should display or hide the progress text                                            | `true`                |
-| `style`                  | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge`             | `default`             |
-
+This service is deployed on **[Vercel](https://vercel.com)** and accessible via the domain **[progress-bar.xyz](https://progress-bar.xyz)**.
 
 ---
 
-## Examples
+## ⚙️ Parameters
+
+| 🔧 Parameter | 📜 Description | 🎯 Default Value |
+|-------------|---------------|------------------|
+| `title` | Adds a title to the progress bar | None |
+| `scale` | The maximum value that the progress bar represents | 100 |
+| `prefix` | A string to add before the progress number | None |
+| `suffix` | A string to add after the progress number | `%` |
+| `width` | The width of the progress bar in pixels | 100 |
+| `color` | The color of the progress bar (hex code without `#`) | `00ff00` (green) |
+| `progress_background` | The background color of the progress bar (hex code without `#`) | `ffffff` (white) |
+| `progress_number_color` | The color of the progress number (hex code without `#`) | `000000` (black) |
+| `progress_color` | The color of the progress bar (hex code without `#`) | Depends on percentage |
+| `show_text` | If should display or hide the progress text | `true` |
+| `style` | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge` | `default` |
+
+### Examples
 
 Below are several examples showcasing different ways to generate progress bars.
 
-| Example Preview                                                                 | URL                                                                               |
+| 📌 Preview                                                                 | 🌐 URL                                                                               |
 |---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
 | ![Progress](https://progress-bar.xyz/28/)                                       | [https://progress-bar.xyz/28/](https://progress-bar.xyz/28/)                      |
 | ![Progress](https://progress-bar.xyz/28/?title=progress)                        | [https://progress-bar.xyz/28/?title=progress](https://progress-bar.xyz/28/?title=progress) |
@@ -63,39 +62,36 @@ Below are several examples showcasing different ways to generate progress bars.
 
 ---
 
-## Styles
+## 🎨 Styles
 
-We currently have `flat` (default), `square`, `plastic`, `for-the-badge`, `thin-rounded`, `neo-glass`, and `minimal-matte` styles:
+We currently support:
 
-| Example Preview                                                | URL                                                                                                    |
-|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| ![Progress](https://progress-bar.xyz/100/?style=flat)          | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)                   |
-| ![Progress](https://progress-bar.xyz/100/?style=square)        | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square)               |   
-| ![Progress](https://progress-bar.xyz/100/?style=plastic)       | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic)             |   
-| ![Progress](https://progress-bar.xyz/100/?style=for-the-badge) | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |    
-| ![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
-| ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
-| ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
+| 🎨 Style | 📌 Preview                                                     | 🌐 URL                                |
+|----------|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| 🟢 **flat** (default) | ![Progress](https://progress-bar.xyz/100/?style=flat)          | [https://progress-bar.xyz/100/?style=flat](https://progress-bar.xyz/100/?style=flat)                   |
+| 🔲 **square** |![Progress](https://progress-bar.xyz/100/?style=square)        | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square)               |
+| 🛡️ **plastic** | ![Progress](https://progress-bar.xyz/100/?style=plastic)       | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic)             |
+| 🔖 **for-the-badge** | ![Progress](https://progress-bar.xyz/100/?style=for-the-badge) | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |
+| 🎭 **thin-rounded** |![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
+| 🪞 **neo-glass** | ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
+| 🎨 **minimal-matte** | ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
 
-- thin-rounded**: A sleek, rounded progress bar with a minimalist feel.
-- **neo-glass**: A modern glass-like effect with transparency.
-- **minimal-matte**: A clean, soft matte finish.
 
 ---
 
-## Deployment
+## 🚀 Deployment
 
-You can deploy this project to Vercel with a single click:
+Deploy this project to **Vercel** with a single click:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
-Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this project!
+Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
 
-### Contributors
+### 👥 Contributors
 
 <!-- readme: collaborators,contributors,snyk-bot/- -start -->
 <table>
@@ -126,14 +122,7 @@ Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this p
                 <a href="https://github.com/EduardoBaptista01">
                     <img src="https://avatars.githubusercontent.com/u/65791384?v=4" width="100;" alt="EduardoBaptista01"/>
                     <br />
-                    <sub><b>EduardoBaptista01</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/bhosley">
-                    <img src="https://avatars.githubusercontent.com/u/22378319?v=4" width="100;" alt="bhosley"/>
-                    <br />
-                    <sub><b>bhosley</b></sub>
+                    <sub><b>Eduardo Baptista</b></sub>
                 </a>
             </td>
 		</tr>
@@ -141,7 +130,7 @@ Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this p
 </table>
 <!-- readme: collaborators,contributors,snyk-bot/- -end -->
 
-### Bots
+### 🤖 Bots
 
 <!-- readme: bots,snyk-bot -start -->
 <table>
@@ -152,13 +141,6 @@ Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this p
                     <img src="https://avatars.githubusercontent.com/in/29110?v=4" width="100;" alt="dependabot[bot]"/>
                     <br />
                     <sub><b>dependabot[bot]</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/penify-dev[bot]">
-                    <img src="https://avatars.githubusercontent.com/in/399279?v=4" width="100;" alt="penify-dev[bot]"/>
-                    <br />
-                    <sub><b>penify-dev[bot]</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -175,6 +157,9 @@ Refer to [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute to this p
 
 ---
 
-## License
+## 📜 License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the **MIT License**.
+
+📄 See [LICENSE](LICENSE) for details.
+
