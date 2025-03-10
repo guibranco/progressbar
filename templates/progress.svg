@@ -36,7 +36,7 @@
       <stop offset="0%" stop-color="rgba(255,255,255,0.85)" />
       <stop offset="60%" stop-color="rgba(255,255,255,0)" />
     </linearGradient>
-    <rect x="0" y="0" width="{{ title_width }}" height="12" fill="url(#title_gloss)" clip-path="url(#clip)" />
+    <rect x="0" y="0" width="{{ title_width }}" height="12" fill="url(#title_gloss)" clip-path="url(#progress_clip)" />
 
     <!-- Shadow for title -->
     <linearGradient id="title_shadow" x1="0" y1="0.6" x2="0" y2="1">
