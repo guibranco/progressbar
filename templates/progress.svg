@@ -28,7 +28,7 @@
   {% endif %}
   
   <!-- Apply the clipping path to keep everything inside the border radius -->
-  <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="100%" fill="url(#a)" clip-path="url(#clip)" />
+  <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="100%" fill="url(#a)" clip-path="url(#progress_clip)" />
 
   {% if gloss %}
     <!-- Gloss for title -->
