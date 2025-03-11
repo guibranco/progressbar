@@ -72,9 +72,9 @@ We currently support:
 | 🔲 **square**         | ![Progress](https://progress-bar.xyz/100/?style=square)        | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square)               |
 | 🛡️ **plastic**        | ![Progress](https://progress-bar.xyz/100/?style=plastic)       | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic)             |
 | 🔖 **for-the-badge**  | ![Progress](https://progress-bar.xyz/100/?style=for-the-badge) | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |
-| 🎭 **thin-rounded**   | ![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
-| 🪞 **neo-glass**       | ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
-| 🎨 **minimal-matte**  | ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
+| 🎭 **thin-rounded** (WIP) | ![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
+| 🪞 **neo-glass** (WIP) | ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
+| 🎨 **minimal-matte** (WIP) | ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
 
 ---
 
