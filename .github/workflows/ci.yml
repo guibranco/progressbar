@@ -68,7 +68,7 @@ jobs:
 
         steps:
             - name: Create Release
-              uses: ncipollo/release-action@v1.16.0
+              uses: ncipollo/release-action@v1.18.0
               with:
                   skipIfReleaseExists: true
                   allowUpdates: false
