@@ -1,1 +1,6 @@
-mode: Mainline
+workflow: GitHubFlow/v1
+mode: ContinuousDeployment
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{MajorMinorPatch}{PreReleaseTagWithDash}+{ShortSha}'
+tag-prefix: '[vV]'
