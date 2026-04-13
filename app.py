@@ -1,6 +1,202 @@
+import ipaddress
+import json
+import socket
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
 from flask import Flask, make_response, redirect, render_template, request
+from jsonpath_ng import parse
+from jsonpath_ng.exceptions import JsonPathParserError
 
 app = Flask(__name__)
+
+
+def _select_autoescape(template_name):
+  if template_name is None:
+    return True
+  return template_name.endswith((".html", ".htm", ".xml", ".xhtml", ".svg"))
+
+
+app.jinja_env.autoescape = _select_autoescape
+
+JSON_FETCH_MAX_BYTES = 512 * 1024
+JSON_FETCH_TIMEOUT_SEC = 8
+JSON_FETCH_USER_AGENT = "progressbar-dynamic-json/1.0"
+JSON_URL_MAX_LENGTH = 2048
+
+# Reject obvious non-JSON / active content when Content-Type is present.
+_JSON_FETCH_BLOCK_CT_PREFIXES = (
+  "text/html",
+  "application/xhtml",
+  "image/",
+  "video/",
+  "audio/",
+  "application/javascript",
+  "text/javascript",
+  "multipart/",
+  "application/zip",
+  "application/gzip",
+  "application/x-gzip",
+)
+
+
+class _NoHttpRedirectHandler(HTTPRedirectHandler):
+  """Do not follow redirects (blocks SSRF via Location: http://127.0.0.1/...)."""
+
+  def redirect_request(self, req, fp, code, msg, headers, newurl):
+    raise URLError("http redirect not allowed")
+
+
+_fetch_json_opener = build_opener(_NoHttpRedirectHandler)
+
+
+def _content_type_allowed_for_json_fetch(content_type_header):
+  if not content_type_header:
+    return True
+  ct = content_type_header.split(";")[0].strip().lower()
+  return not any(ct.startswith(p) for p in _JSON_FETCH_BLOCK_CT_PREFIXES)
+
+
+def _ip_for_ssrf_check(addr):
+  ip = ipaddress.ip_address(addr)
+  if ip.version == 6 and ip.ipv4_mapped is not None:
+    return ip.ipv4_mapped
+  return ip
+
+
+def _finalize_svg_response(response):
+  response.headers["Content-Type"] = "image/svg+xml"
+  response.headers["X-Content-Type-Options"] = "nosniff"
+  return response
+
+
+def normalize_jsonpath_query(selector):
+  """JSONPath ($.items[0].metrics.pct) or dot path from root (items.0.metrics.pct)."""
+  q = (selector or "").strip()
+  if not q:
+    raise ValueError("empty query")
+  if q.startswith("$"):
+    return q
+  parts = [p for p in q.split(".") if p != ""]
+  if not parts:
+    raise ValueError("empty query")
+  out = "$"
+  for p in parts:
+    if p.isdigit():
+      out += f"[{p}]"
+    elif out == "$":
+      out = "$." + p
+    else:
+      out += "." + p
+  return out
+
+
+def url_is_allowed_for_fetch(url):
+  if not url or len(url) > JSON_URL_MAX_LENGTH:
+    return False
+  parsed = urlparse(url)
+  if parsed.scheme not in ("http", "https"):
+    return False
+  if parsed.username or parsed.password:
+    # e.g. http://127.0.0.1@evil.com/ looks public but embeds a misleading host.
+    return False
+  port = parsed.port
+  if port is not None and port not in (80, 443):
+    return False
+  host = (parsed.hostname or "").lower()
+  if not host:
+    return False
+  blocked_hosts = (
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+    "::1",
+    "metadata.google.internal",
+    "metadata.goog",
+  )
+  if host in blocked_hosts or host.endswith(".localhost"):
+    return False
+  if "169.254.169.254" in host:
+    return False
+  host_for_ip = host.strip("[]")
+  try:
+    ip = _ip_for_ssrf_check(host_for_ip)
+    if (
+      ip.is_private
+      or ip.is_loopback
+      or ip.is_link_local
+      or ip.is_reserved
+      or ip.is_multicast
+    ):
+      return False
+  except ValueError:
+    pass
+  try:
+    for res in socket.getaddrinfo(host, None):
+      addr = res[4][0]
+      try:
+        ip = _ip_for_ssrf_check(addr)
+        if (
+          ip.is_private
+          or ip.is_loopback
+          or ip.is_link_local
+          or ip.is_reserved
+        ):
+          return False
+      except ValueError:
+        continue
+  except OSError:
+    return False
+  return True
+
+
+def fetch_json_document(url):
+  req = Request(
+    url,
+    headers={"User-Agent": JSON_FETCH_USER_AGENT},
+    method="GET",
+  )
+  with _fetch_json_opener.open(req, timeout=JSON_FETCH_TIMEOUT_SEC) as resp:
+    if not _content_type_allowed_for_json_fetch(resp.headers.get("Content-Type")):
+      raise ValueError("unsupported content type")
+    data = resp.read(JSON_FETCH_MAX_BYTES + 1)
+  if len(data) > JSON_FETCH_MAX_BYTES:
+    raise ValueError("response too large")
+  return json.loads(data.decode("utf-8"))
+
+
+def extract_progress_with_jsonpath(doc, selector):
+  path = normalize_jsonpath_query(selector)
+  try:
+    expr = parse(path)
+  except JsonPathParserError as e:
+    raise ValueError(f"invalid JSONPath: {e}") from e
+  matches = [m.value for m in expr.find(doc)]
+  if not matches:
+    raise ValueError("JSONPath matched no values")
+  raw = matches[0]
+  if isinstance(raw, bool):
+    raise ValueError("matched value is boolean")
+  if isinstance(raw, (int, float)):
+    return float(raw)
+  if isinstance(raw, str):
+    s = raw.strip()
+    if not s:
+      raise ValueError("matched string is empty")
+    if s.endswith("%"):
+      s = s[:-1].strip()
+    try:
+      return float(s)
+    except ValueError as e:
+      raise ValueError("matched string is not numeric") from e
+  raise ValueError("matched value is not numeric")
+
+
+def error_svg_response(message, status=502):
+  template = render_template("dynamic_error.svg", message=message)
+  response = make_response(template, status)
+  return _finalize_svg_response(response)
 
 def is_true(value):
   return value.lower() == 'true'
@@ -188,6 +384,46 @@ def get_template_fields(progress):
 
     return {**style, **clean_req_params}
 
+
+@app.route("/dynamic/json/")
+def get_progress_svg_dynamic_json():
+  """Load progress from a remote JSON `url` and a `query` into that document.
+
+  `query` is JSONPath (e.g. $.items[0].metrics.pct) or dot form from the root
+  (e.g. items.0.metrics.pct).
+  Optional `cache` sets Cache-Control max-age in seconds.
+  Other params match /N/ (title, scale, width, style, …).
+  """
+  json_url = request.args.get("url")
+  json_query = request.args.get("query")
+  if not json_url or not json_query:
+    return error_svg_response("missing url or query", 400)
+  if not url_is_allowed_for_fetch(json_url):
+    return error_svg_response("url not allowed", 400)
+  try:
+    doc = fetch_json_document(json_url)
+    progress = extract_progress_with_jsonpath(doc, json_query)
+  except (URLError, HTTPError, TimeoutError, OSError):
+    return error_svg_response("fetch failed", 502)
+  except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as e:
+    msg = str(e)[:60] if str(e) else "bad json or query"
+    return error_svg_response(msg, 422)
+
+  template_fields = get_template_fields(progress)
+  template = render_template("progress.svg", **template_fields)
+  response = make_response(template)
+  _finalize_svg_response(response)
+  cache_raw = request.args.get("cache") or request.args.get("cacheSeconds")
+  if cache_raw is not None:
+    try:
+      sec = max(0, min(int(cache_raw), 86400))
+      if sec > 0:
+        response.headers["Cache-Control"] = f"public, max-age={sec}"
+    except (TypeError, ValueError):
+      pass
+  return response
+
+
 @app.route("/<int:progress>/")
 def get_progress_svg(progress):
     template_fields = get_template_fields(progress)
@@ -195,8 +431,7 @@ def get_progress_svg(progress):
     template = render_template("progress.svg", **template_fields)
 
     response = make_response(template)
-    response.headers["Content-Type"] = "image/svg+xml"
-    return response
+    return _finalize_svg_response(response)
 
 @app.route("/")
 def redirect_to_github():

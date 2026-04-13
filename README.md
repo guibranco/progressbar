@@ -78,6 +78,33 @@ We currently support:
 
 ---
 
+## 📡 Progress from a JSON URL
+
+Besides a fixed value in the path (`/75/`), you can load the number from a remote JSON file.
+
+**Example** (using the sample file in `docs/dynamic-json-sample.json`):
+
+```txt
+https://progress-bar.xyz/dynamic/json/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fguibranco%2Fprogressbar%2Fmain%2Fdocs%2Fdynamic-json-sample.json&query=demo.metrics.translationPercent&title=JSON%20Demo
+```
+
+Sample JSON file:
+[https://raw.githubusercontent.com/guibranco/progressbar/main/docs/dynamic-json-sample.json](https://raw.githubusercontent.com/guibranco/progressbar/main/docs/dynamic-json-sample.json)
+
+![Progress from JSON](https://progress-bar.xyz/dynamic/json/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fguibranco%2Fprogressbar%2Fmain%2Fdocs%2Fdynamic-json-sample.json&query=demo.metrics.translationPercent&title=demo)
+
+Use query parameters:
+
+| Parameter   | Description |
+| ----------- | ----------- |
+| **`url`**   | Required. Address of the JSON document (`http` or `https`). Must be URL-encoded in the query string. |
+| **`query`** | Required. [JSONPath](https://goessner.net/articles/JsonPath/) (e.g. `$.items[0].metrics.pct`) or dot form from the root (e.g. `items.0.metrics.pct`). |
+| **`cache`** | Optional. `Cache-Control` max-age in seconds. |
+
+Any other parameters from the table above (`title`, `scale`, `style`, …) apply the same way as on `/{number}/`.
+
+---
+
 ## 🚀 Deployment
 
 Deploy this project to **Vercel** with a single click:
@@ -94,8 +121,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
 
 <!-- readme: collaborators,contributors,snyk-bot/- -start -->
 <table>
-	<tbody>
-		<tr>
+ <tbody>
+  <tr>
             <td align="center">
                 <a href="https://github.com/guibranco">
                     <img src="https://avatars.githubusercontent.com/u/3362854?v=4" width="100;" alt="guibranco"/>
@@ -131,8 +158,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                     <sub><b>bhosley</b></sub>
                 </a>
             </td>
-		</tr>
-	<tbody>
+  </tr>
+ <tbody>
 </table>
 <!-- readme: collaborators,contributors,snyk-bot/- -end -->
 
@@ -140,8 +167,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
 
 <!-- readme: bots,snyk-bot -start -->
 <table>
-	<tbody>
-		<tr>
+ <tbody>
+  <tr>
             <td align="center">
                 <a href="https://github.com/dependabot[bot]">
                     <img src="https://avatars.githubusercontent.com/in/29110?v=4" width="100;" alt="dependabot[bot]"/>
@@ -177,8 +204,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                     <sub><b>Snyk bot</b></sub>
                 </a>
             </td>
-		</tr>
-	<tbody>
+  </tr>
+ <tbody>
 </table>
 <!-- readme: bots,snyk-bot -end -->
 
