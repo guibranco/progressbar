@@ -1,5 +1,7 @@
+import codecs
 import ipaddress
 import json
+import re
 import socket
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
@@ -56,6 +58,28 @@ def _content_type_allowed_for_json_fetch(content_type_header):
     return True
   ct = content_type_header.split(";")[0].strip().lower()
   return not any(ct.startswith(p) for p in _JSON_FETCH_BLOCK_CT_PREFIXES)
+
+
+def _charset_from_content_type(content_type_header):
+  """Return a Python codec name from Content-Type charset=..., default utf-8."""
+  if not content_type_header:
+    return "utf-8"
+  m = re.search(r"charset\s*=\s*([^;\s]+)", content_type_header, flags=re.I)
+  if not m:
+    return "utf-8"
+  raw = m.group(1).strip().strip('"').strip("'")
+  if raw.lower() in ("utf8", "utf_8"):
+    return "utf-8"
+  return raw
+
+
+def _decode_json_bytes(content_type_header, data):
+  encoding = _charset_from_content_type(content_type_header or "")
+  try:
+    codecs.lookup(encoding)
+  except LookupError as e:
+    raise ValueError(f"unsupported charset: {encoding}") from e
+  return data.decode(encoding)
 
 
 def _ip_for_ssrf_check(addr):
@@ -142,6 +166,7 @@ def url_is_allowed_for_fetch(url):
           or ip.is_loopback
           or ip.is_link_local
           or ip.is_reserved
+          or ip.is_multicast
         ):
           return False
       except ValueError:
@@ -158,12 +183,14 @@ def fetch_json_document(url):
     method="GET",
   )
   with _fetch_json_opener.open(req, timeout=JSON_FETCH_TIMEOUT_SEC) as resp:
-    if not _content_type_allowed_for_json_fetch(resp.headers.get("Content-Type")):
+    ct_header = resp.headers.get("Content-Type")
+    if not _content_type_allowed_for_json_fetch(ct_header):
       raise ValueError("unsupported content type")
     data = resp.read(JSON_FETCH_MAX_BYTES + 1)
   if len(data) > JSON_FETCH_MAX_BYTES:
     raise ValueError("response too large")
-  return json.loads(data.decode("utf-8"))
+  text = _decode_json_bytes(ct_header, data)
+  return json.loads(text)
 
 
 def extract_progress_with_jsonpath(doc, selector):
