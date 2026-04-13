@@ -44,6 +44,7 @@ _JSON_FETCH_BLOCK_CT_PREFIXES = (
 
 
 class _NoHttpRedirectHandler(HTTPRedirectHandler):
+
   """Do not follow redirects (blocks SSRF via Location: http://127.0.0.1/...)."""
 
   def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -96,7 +97,11 @@ def _finalize_svg_response(response):
 
 
 def normalize_jsonpath_query(selector):
-  """JSONPath ($.items[0].metrics.pct) or dot path from root (items.0.metrics.pct)."""
+  """
+  Normalize a path selector into jsonpath-ng syntax or dot form from the root.
+
+  Examples: ``$.items[0].metrics.pct`` or ``items.0.metrics.pct``.
+  """
   q = (selector or "").strip()
   if not q:
     raise ValueError("empty query")
@@ -116,6 +121,56 @@ def normalize_jsonpath_query(selector):
   return out
 
 
+_BLOCKED_FETCH_HOSTS = frozenset(
+  (
+    "localhost",
+    "127.0.0.1",
+    "::1",
+    "metadata.google.internal",
+    "metadata.goog",
+  )
+)
+
+
+def _ip_has_disallowed_ssrf_traits(ip):
+  return (
+    ip.is_private
+    or ip.is_loopback
+    or ip.is_link_local
+    or ip.is_reserved
+    or ip.is_multicast
+  )
+
+
+def _host_string_blocked_by_name(host):
+  if host in _BLOCKED_FETCH_HOSTS or host.endswith(".localhost"):
+    return True
+  if "169.254.169.254" in host:
+    return True
+  try:
+    ip = _ip_for_ssrf_check(host.strip("[]"))
+  except ValueError:
+    return False
+  if ip.version == 4 and int(ip) == 0:
+    return True
+  return _ip_has_disallowed_ssrf_traits(ip)
+
+
+def _dns_resolves_only_to_allowed_ips(host):
+  try:
+    for res in socket.getaddrinfo(host, None):
+      addr = res[4][0]
+      try:
+        ip = _ip_for_ssrf_check(addr)
+      except ValueError:
+        continue
+      if _ip_has_disallowed_ssrf_traits(ip):
+        return False
+  except OSError:
+    return False
+  return True
+
+
 def url_is_allowed_for_fetch(url):
   if not url or len(url) > JSON_URL_MAX_LENGTH:
     return False
@@ -131,49 +186,9 @@ def url_is_allowed_for_fetch(url):
   host = (parsed.hostname or "").lower()
   if not host:
     return False
-  blocked_hosts = (
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
-    "::1",
-    "metadata.google.internal",
-    "metadata.goog",
-  )
-  if host in blocked_hosts or host.endswith(".localhost"):
+  if _host_string_blocked_by_name(host):
     return False
-  if "169.254.169.254" in host:
-    return False
-  host_for_ip = host.strip("[]")
-  try:
-    ip = _ip_for_ssrf_check(host_for_ip)
-    if (
-      ip.is_private
-      or ip.is_loopback
-      or ip.is_link_local
-      or ip.is_reserved
-      or ip.is_multicast
-    ):
-      return False
-  except ValueError:
-    pass
-  try:
-    for res in socket.getaddrinfo(host, None):
-      addr = res[4][0]
-      try:
-        ip = _ip_for_ssrf_check(addr)
-        if (
-          ip.is_private
-          or ip.is_loopback
-          or ip.is_link_local
-          or ip.is_reserved
-          or ip.is_multicast
-        ):
-          return False
-      except ValueError:
-        continue
-  except OSError:
-    return False
-  return True
+  return _dns_resolves_only_to_allowed_ips(host)
 
 
 def fetch_json_document(url):
@@ -414,10 +429,11 @@ def get_template_fields(progress):
 
 @app.route("/dynamic/json/")
 def get_progress_svg_dynamic_json():
-  """Load progress from a remote JSON `url` and a `query` into that document.
+  """
+  Load progress from a remote JSON `url` and a `query` into that document.
 
-  `query` is JSONPath (e.g. $.items[0].metrics.pct) or dot form from the root
-  (e.g. items.0.metrics.pct).
+  `query` is a jsonpath-ng expression (e.g. $.items[0].metrics.pct) or dot form
+  from the root (e.g. items.0.metrics.pct).
   Optional `cache` sets Cache-Control max-age in seconds.
   Other params match /N/ (title, scale, width, style, …).
   """
