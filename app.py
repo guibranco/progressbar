@@ -412,7 +412,7 @@ def get_progress_svg_dynamic_json():
   template_fields = get_template_fields(progress)
   template = render_template("progress.svg", **template_fields)
   response = make_response(template)
-  _finalize_svg_response(response)
+  response = _finalize_svg_response(response)
   cache_raw = request.args.get("cache") or request.args.get("cacheSeconds")
   if cache_raw is not None:
     try:
