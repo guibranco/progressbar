@@ -125,6 +125,13 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/nimble-turtle">
+                    <img src="https://avatars.githubusercontent.com/u/190960520?v=4" width="100;" alt="nimble-turtle"/>
+                    <br />
+                    <sub><b>nimble-turtle</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/ztest95">
                     <img src="https://avatars.githubusercontent.com/u/110767420?v=4" width="100;" alt="ztest95"/>
                     <br />
@@ -152,15 +159,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                     <sub><b>bhosley</b></sub>
                 </a>
             </td>
-            <td align="center">
-                <a href="https://github.com/nimble-turtle">
-                    <img src="https://avatars.githubusercontent.com/u/190960520?v=4" width="100;" alt="nimble-turtle"/>
-                    <br />
-                    <sub><b>nimble-turtle</b></sub>
-                </a>
-            </td>
 		</tr>
-	</tbody>
+	<tbody>
 </table>
 <!-- readme: collaborators,contributors,snyk-bot/- -end -->
 
@@ -206,7 +206,7 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                 </a>
             </td>
 		</tr>
-	</tbody>
+	<tbody>
 </table>
 <!-- readme: bots,snyk-bot -end -->
 
