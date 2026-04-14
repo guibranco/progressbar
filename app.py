@@ -341,6 +341,13 @@ def get_style_fields(style):
     }
     return style_templates.get(style) if style in style_templates else {}
 
+
+def format_progress_text(progress):
+    if isinstance(progress, float) and progress.is_integer():
+        return int(progress)
+    return progress
+
+
 def get_template_fields(progress):
     """Retrieve template fields for rendering progress information.
 
@@ -361,7 +368,7 @@ def get_template_fields(progress):
 
     title = request.args.get("title")
 
-    progress_text = progress
+    progress_text = format_progress_text(progress)
 
     scale = 100
     try:
