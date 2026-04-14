@@ -93,7 +93,7 @@ Use query parameters:
 | ----------- | ----------- |
 | **`url`**   | Required. Address of the JSON document (`http` or `https`). Must be URL-encoded in the query string. |
 | **`query`** | Required. [JSONPath](https://goessner.net/articles/JsonPath/) (e.g. `$.items[0].metrics.pct`) or dot form from the root (e.g. `items.0.metrics.pct`). |
-| **`cache`** | Optional. `Cache-Control` max-age in seconds. |
+| **`cache`** | Optional. `Cache-Control` max-age in seconds. Default: none (header not set unless provided and `> 0`). |
 
 Any other parameters from the table above (`title`, `scale`, `style`, …) apply the same way as on `/{number}/`.
 
