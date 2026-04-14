@@ -1,0 +1,8 @@
+{
+  "demo": {
+    "metrics": {
+      "translationPercent": "40%",
+      "approvalPercent": "65%"
+    }
+  }
+}
