@@ -121,8 +121,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
 
 <!-- readme: collaborators,contributors,snyk-bot/- -start -->
 <table>
- <tbody>
-  <tr>
+	<tbody>
+		<tr>
             <td align="center">
                 <a href="https://github.com/guibranco">
                     <img src="https://avatars.githubusercontent.com/u/3362854?v=4" width="100;" alt="guibranco"/>
@@ -158,8 +158,15 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                     <sub><b>bhosley</b></sub>
                 </a>
             </td>
-  </tr>
- </tbody>
+            <td align="center">
+                <a href="https://github.com/nimble-turtle">
+                    <img src="https://avatars.githubusercontent.com/u/190960520?v=4" width="100;" alt="nimble-turtle"/>
+                    <br />
+                    <sub><b>nimble-turtle</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
 </table>
 <!-- readme: collaborators,contributors,snyk-bot/- -end -->
 
@@ -167,8 +174,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
 
 <!-- readme: bots,snyk-bot -start -->
 <table>
- <tbody>
-  <tr>
+	<tbody>
+		<tr>
             <td align="center">
                 <a href="https://github.com/dependabot[bot]">
                     <img src="https://avatars.githubusercontent.com/in/29110?v=4" width="100;" alt="dependabot[bot]"/>
@@ -204,8 +211,8 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                     <sub><b>Snyk bot</b></sub>
                 </a>
             </td>
-  </tr>
- </tbody>
+		</tr>
+	<tbody>
 </table>
 <!-- readme: bots,snyk-bot -end -->
 
