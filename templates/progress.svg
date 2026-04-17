@@ -73,7 +73,7 @@
     </g>
   {% endif %}
 
-  <g fill="#fff" text-anchor="middle"  font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="{{font_size}}" font-weight="{{progress_weight}}" letter-spacing="{{letter_spacing}}">
+  <g fill="#{{ progress_number_color }}" text-anchor="middle"  font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="{{font_size}}" font-weight="{{progress_weight}}" letter-spacing="{{letter_spacing}}">
     {% if show_text %}
       {% if show_shadow %}
       <text x="{{ progress_width/2 | int + title_width }}" y="{{ title_pos_y + 1 }}" fill="#010101" fill-opacity=".3" >

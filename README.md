@@ -33,7 +33,7 @@ This service is deployed on **[Vercel](https://vercel.com)** and accessible via 
 | `width`                 | The width of the progress bar in pixels                                    | 100                   |
 | `color`                 | The color of the progress bar (hex code without `#`)                       | `00ff00` (green)      |
 | `progress_background`   | The background color of the progress bar (hex code without `#`)            | `ffffff` (white)      |
-| `progress_number_color` | The color of the progress number (hex code without `#`)                    | `000000` (black)      |
+| `progress_number_color` | The color of the progress number (hex code without `#`)                    | `ffffff` (white)      |
 | `progress_color`        | The color of the progress bar (hex code without `#`)                       | Depends on percentage |
 | `show_text`             | Whether to display or hide the progress text                               | `true`                |
 | `style`                 | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge` | `default`             |
