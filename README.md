@@ -92,7 +92,7 @@ Use query parameters:
 | Parameter   | Description |
 | ----------- | ----------- |
 | **`url`**   | Required. Address of the JSON document (`http` or `https`). Must be URL-encoded in the query string. |
-| **`query`** | Required. [JSONPath](https://goessner.net/articles/JsonPath/) (e.g. `$.items[0].metrics.pct`) or dot form from the root (e.g. `items.0.metrics.pct`). |
+| **`query`** | Required. [JSONPath](https://goessner.net/articles/JsonPath/) (e.g. `$.items[0].metrics.pct`) or dot form from the root (e.g. `items.0.metrics.pct`). Filter expressions are supported, so you can look up a value by a sibling field instead of a hardcoded index — e.g. `$.progress[?(@.data.language.name=='Spanish')].data.translationProgress`. |
 | **`cache`** | Optional. `Cache-Control` max-age in seconds. Default: none (header not set unless provided and `> 0`). |
 
 Any other parameters from the table above (`title`, `scale`, `style`, …) apply the same way as on `/{number}/`.
