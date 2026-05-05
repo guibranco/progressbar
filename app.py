@@ -8,8 +8,8 @@ from urllib.parse import urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from flask import Flask, make_response, redirect, render_template, request
-from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
+from jsonpath_ng.ext import parse
 
 app = Flask(__name__)
 
@@ -100,7 +100,13 @@ def normalize_jsonpath_query(selector):
   """
   Normalize a path selector into jsonpath-ng syntax or dot form from the root.
 
-  Examples: ``$.items[0].metrics.pct`` or ``items.0.metrics.pct``.
+  Accepts full JSONPath (including filter expressions) when prefixed with ``$``,
+  or a simple dot/index form from the root.
+
+  Examples:
+    - ``$.items[0].metrics.pct``
+    - ``items.0.metrics.pct``
+    - ``$.progress[?(@.data.language.name=='Spanish')].data.translationProgress``
   """
   q = (selector or "").strip()
   if not q:
@@ -439,8 +445,9 @@ def get_progress_svg_dynamic_json():
   """
   Load progress from a remote JSON `url` and a `query` into that document.
 
-  `query` is a jsonpath-ng expression (e.g. $.items[0].metrics.pct) or dot form
-  from the root (e.g. items.0.metrics.pct).
+  `query` is a jsonpath-ng expression (e.g. $.items[0].metrics.pct), a dot form
+  from the root (e.g. items.0.metrics.pct), or a filter expression
+  (e.g. $.progress[?(@.data.language.name=='Spanish')].data.translationProgress).
   Optional `cache` sets Cache-Control max-age in seconds.
   Other params match /N/ (title, scale, width, style, …).
   """

@@ -98,6 +98,42 @@ def test_dynamic_json_jsonpath_dollar(mock_fetch, client):
 
 
 @patch("app.fetch_json_document")
+def test_dynamic_json_filter_expression_by_name(mock_fetch, client):
+    mock_fetch.return_value = {
+        "progress": [
+            {"data": {"language": {"name": "Arabic"}, "translationProgress": 5}},
+            {"data": {"language": {"name": "Spanish"}, "translationProgress": 87}},
+        ],
+    }
+    response = client.get(
+        "/dynamic/json/",
+        query_string={
+            "url": "https://example.com/stats.json",
+            "query": "$.progress[?(@.data.language.name=='Spanish')].data.translationProgress",
+        },
+    )
+    assert response.status_code == 200
+    assert b"87" in response.data
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_filter_expression_no_match_returns_422(mock_fetch, client):
+    mock_fetch.return_value = {
+        "progress": [
+            {"data": {"language": {"name": "Arabic"}, "translationProgress": 5}},
+        ],
+    }
+    response = client.get(
+        "/dynamic/json/",
+        query_string={
+            "url": "https://example.com/stats.json",
+            "query": "$.progress[?(@.data.language.name=='Klingon')].data.translationProgress",
+        },
+    )
+    assert response.status_code == 422
+
+
+@patch("app.fetch_json_document")
 def test_dynamic_json_percent_suffix_string(mock_fetch, client):
     mock_fetch.return_value = {"approvalProgress": "73%"}
     response = client.get(
