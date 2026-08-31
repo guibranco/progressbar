@@ -160,7 +160,7 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                 </a>
             </td>
 		</tr>
-	</tbody>
+	<tbody>
 </table>
 <!-- readme: collaborators,contributors,snyk-bot/- -end -->
 
@@ -206,7 +206,7 @@ Check out [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to contribute!
                 </a>
             </td>
 		</tr>
-	</tbody>
+	<tbody>
 </table>
 <!-- readme: bots,snyk-bot -end -->
 
