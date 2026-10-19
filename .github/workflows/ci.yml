@@ -17,25 +17,25 @@ jobs:
             semVer: ${{ steps.gitversion.outputs.semVer }}
 
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
               with:
                   fetch-depth: 0
 
             - name: Install GitVersion
-              uses: gittools/actions/gitversion/setup@v4
+              uses: gittools/actions/gitversion/setup@7417b1089e2c7de93510f1901d656ddf60bb024f # v4
               with:
                   versionSpec: '6.x'
 
             - name: Determine Version
               id: gitversion
-              uses: gittools/actions/gitversion/execute@v4
+              uses: gittools/actions/gitversion/execute@7417b1089e2c7de93510f1901d656ddf60bb024f # v4
 
             - name: Set up Python
-              uses: actions/setup-python@v7
+              uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
               with:
                   python-version: "3.11"
             - name: Cache pip dependencies
-              uses: actions/cache@v6
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
               with:
                 path: ~/.cache/pip
                 key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
@@ -66,7 +66,7 @@ jobs:
 
         steps:
             - name: Create Release
-              uses: ncipollo/release-action@v1.21.0
+              uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
               with:
                   skipIfReleaseExists: true
                   allowUpdates: false
