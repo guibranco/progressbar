@@ -1,0 +1,13 @@
+# Direct dependencies. requirements.txt is the fully pinned + hashed lock file
+# generated from this file; regenerate it after changing anything here:
+#
+#   pip install pip-tools
+#   pip-compile --generate-hashes --allow-unsafe --output-file=requirements.txt requirements.in
+#
+Flask==3.1.3
+jsonpath-ng==1.13.0
+# Server only (self-hosted deployments); unused but harmless on Vercel.
+gunicorn==26.2.0
+# Optional dependency of click on Windows; pinned explicitly so the hashed
+# lock file also installs on Windows machines.
+colorama==0.4.6

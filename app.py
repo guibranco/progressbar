@@ -550,7 +550,7 @@ def get_progress_svg(progress):
     )
 
 
-@app.route("/health", strict_slashes=False)
+@app.route("/health", methods=["GET"], strict_slashes=False)
 def health():
     """Liveness probe for uptime monitors, reverse proxies and container healthchecks."""
     response = make_response({"status": "ok"})

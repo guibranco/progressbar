@@ -22,20 +22,23 @@ DOMAIN="${DOMAIN:-progress-bar.xyz}"
 DEPLOY_USER="${DEPLOY_USER:-${SUDO_USER:-root}}"
 
 log() { printf '\n==> %s\n' "$*"; }
-need() { command -v "$1" >/dev/null 2>&1 || { echo "missing required command: $1" >&2; exit 1; }; }
+need() {
+  local cmd="$1"
+  command -v "$cmd" >/dev/null 2>&1 || { echo "missing required command: $cmd" >&2; exit 1; }
+}
 
-[ "$(id -u)" -eq 0 ] || { echo "run as root (sudo)" >&2; exit 1; }
+[[ "$(id -u)" -eq 0 ]] || { echo "run as root (sudo)" >&2; exit 1; }
 need git; need docker; need nginx; need curl
 docker compose version >/dev/null 2>&1 || { echo "missing: docker compose plugin" >&2; exit 1; }
 
 log "Checking out $REPO_URL ($BRANCH) into $APP_DIR"
-if [ ! -d "$APP_DIR/.git" ]; then
+if [[ ! -d "$APP_DIR/.git" ]]; then
   mkdir -p "$(dirname "$APP_DIR")"
   git clone --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
 fi
 cd "$APP_DIR"
 git pull --ff-only origin "$BRANCH"
-[ -f deploy/env ] || cp deploy/env.example deploy/env
+[[ -f deploy/env ]] || cp deploy/env.example deploy/env
 chown -R "$DEPLOY_USER": "$APP_DIR"
 git config --global --add safe.directory "$APP_DIR" >/dev/null 2>&1 || true
 

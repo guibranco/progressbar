@@ -32,6 +32,12 @@ Before you begin contributing, please ensure you have the following prerequisite
    pip install -r requirements.txt
    ```
 
+   `requirements.txt` is a lock file (every package pinned and hashed) generated from `requirements.in`. To add or bump a dependency, edit `requirements.in` and regenerate the lock:
+   ```sh
+   pip install pip-tools
+   pip-compile --generate-hashes --allow-unsafe --output-file=requirements.txt requirements.in
+   ```
+
 ## ▶️ Running the API Locally
 
 Any of these starts the API on your machine:

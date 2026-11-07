@@ -13,8 +13,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# requirements.txt is a pip-compile lock file (every package pinned + hashed),
+# and only wheels are accepted, so nothing is built from source at image time.
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install --require-hashes --only-binary :all: -r requirements.txt
 
 COPY app.py gunicorn.conf.py ./
 COPY templates ./templates
