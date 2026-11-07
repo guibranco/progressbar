@@ -54,6 +54,7 @@ vercel dev                               # emulates the Vercel deployment (needs
 Before submitting a pull request, test your changes:
 
 ### 🏠 Local Testing
+
 - Run the unit tests: `pip install pytest && pytest test_api.py`.
 - Start the API (see above) and verify that your changes work as expected.
 - Use **Postman**, **cURL**, or a browser to send requests to the local API. 🌐

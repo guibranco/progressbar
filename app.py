@@ -65,12 +65,13 @@ STALE_WHILE_REVALIDATE_SECONDS = 7 * 86400
 
 def cache_control_value(seconds, stale_while_revalidate=0):
   """Build a Cache-Control header value for a badge response."""
+  seconds = int(seconds)
   if seconds <= 0:
     return "no-store"
-  value = f"public, max-age={seconds}, s-maxage={seconds}"
-  if stale_while_revalidate > 0:
-    value += f", stale-while-revalidate={stale_while_revalidate}"
-  return value
+  directives = ["public", "max-age=" + str(seconds), "s-maxage=" + str(seconds)]
+  if int(stale_while_revalidate) > 0:
+    directives.append("stale-while-revalidate=" + str(int(stale_while_revalidate)))
+  return ", ".join(directives)
 
 
 def _set_cache_control(response, seconds, stale_while_revalidate=0):
@@ -297,8 +298,7 @@ def error_svg_response(message, status=502):
   template = render_template("dynamic_error.svg", message=message)
   response = make_response(template, status)
   response = _finalize_svg_response(response)
-  # Never let a transient failure get pinned in a cache.
-  return _set_cache_control(response, 0)
+  return _set_cache_control(response, 0)  # never pin a transient failure in a cache
 
 def is_true(value):
   return value.lower() == 'true'

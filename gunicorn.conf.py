@@ -1,5 +1,4 @@
-"""
-Gunicorn configuration for self-hosted deployments (Docker or bare metal).
+"""Gunicorn configuration for self-hosted deployments (Docker or bare metal).
 
 Vercel ignores this file: there the app is served by the @vercel/python
 runtime. Every value can be overridden with an environment variable so the
