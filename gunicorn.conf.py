@@ -1,12 +1,11 @@
-"""Gunicorn configuration for self-hosted deployments (Docker or bare metal).
+"""Gunicorn configuration for self-hosted deployments (Docker or bare metal)."""
 
-Vercel ignores this file: there the app is served by the @vercel/python
-runtime. Every value can be overridden with an environment variable so the
-same image/unit works on a 1 vCPU / 1 GB VM and on something bigger.
-
-Usage:
-    gunicorn -c gunicorn.conf.py app:app
-"""
+# Vercel ignores this file: there the app is served by the @vercel/python
+# runtime. Every value can be overridden with an environment variable so the
+# same image/unit works on a 1 vCPU / 1 GB VM and on something bigger.
+#
+# Usage:
+#     gunicorn -c gunicorn.conf.py app:app
 
 import os
 

@@ -44,8 +44,7 @@ echo "==> Rebuilding and restarting"
 docker compose up -d --build --remove-orphans
 
 wait_healthy() {
-  local attempt
-  for attempt in $(seq 1 20); do
+  for _ in $(seq 1 20); do
     if curl -fsS --max-time 2 "$HEALTH_URL" >/dev/null 2>&1; then
       return 0
     fi
