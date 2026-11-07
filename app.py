@@ -80,6 +80,14 @@ def _set_cache_control(response, seconds, stale_while_revalidate=0):
   )
   return response
 
+
+@app.after_request
+def _never_cache_errors(response):
+  """Flask's own 404/405/500 responses do not go through error_svg_response."""
+  if response.status_code >= 400 and "Cache-Control" not in response.headers:
+    response.headers["Cache-Control"] = "no-store"
+  return response
+
 # Reject obvious non-JSON / active content when Content-Type is present.
 _JSON_FETCH_BLOCK_CT_PREFIXES = (
   "text/html",

@@ -55,6 +55,16 @@ def test_static_badge_defines_clip_paths(client):
     assert b'<clipPath id="progress_clip">' in response.data
 
 
+def test_framework_errors_are_not_cacheable(client):
+    response = client.get("/not-a-route/")
+    assert response.status_code == 404
+    assert response.headers.get("Cache-Control") == "no-store"
+
+    response = client.post("/health")
+    assert response.status_code == 405
+    assert response.headers.get("Cache-Control") == "no-store"
+
+
 def test_health(client):
     for path in ("/health", "/health/"):
         response = client.get(path)

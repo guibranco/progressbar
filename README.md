@@ -112,7 +112,7 @@ Badges are fetched by GitHub's image proxy (camo), browsers and CDNs on every RE
 | `/dynamic/json/`  | `public, max-age=300, s-maxage=300` by default; override per request with `cache=` |
 | Errors, `/health` | `no-store`                                                                        |
 
-The two defaults can be changed per deployment with the environment variables `PROGRESSBAR_STATIC_CACHE_SECONDS` and `PROGRESSBAR_DYNAMIC_CACHE_SECONDS` (0–86400). Keep in mind that changes to a badge's look can take up to the static TTL to show up in READMEs.
+The two defaults can be changed per deployment with the environment variables `PROGRESSBAR_STATIC_CACHE_SECONDS` and `PROGRESSBAR_DYNAMIC_CACHE_SECONDS` (0–86400). Keep in mind that changes to a badge's look can take up to the static TTL (one day) to show up in READMEs — and a CDN that honours `stale-while-revalidate` may keep serving the previous version for up to another 7 days while it refreshes the entry in the background.
 
 ---
 
@@ -139,10 +139,12 @@ The same code runs anywhere Python runs. The repository ships everything needed 
 | `deploy/install.sh`, `deploy/update.sh`| First-time setup and redeploy scripts for the VM                                          |
 | `.github/workflows/deploy.yml`         | Optional CI deploy over SSH after `CI` passes on `main` (opt-in via `SELF_HOST_DEPLOY=true`) |
 
-Quick start on an Ubuntu host with Docker and NGINX installed:
+Quick start on an Ubuntu host with Docker and NGINX installed (`DOMAIN=` and `APP_DIR=` can be exported first to override the defaults):
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/guibranco/progressbar/main/deploy/install.sh | sudo bash
+curl -fsSLO https://raw.githubusercontent.com/guibranco/progressbar/main/deploy/install.sh
+less install.sh                            # review before running it as root
+sudo bash install.sh
 sudo certbot --nginx -d progress-bar.xyz   # TLS
 ```
 

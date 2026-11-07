@@ -3,7 +3,9 @@
 # First-time setup of ProgressBar on a VM (tested on Ubuntu 24.04).
 # Prerequisites: git, docker (+ compose plugin) and nginx already installed.
 #
-#   curl -fsSL https://raw.githubusercontent.com/guibranco/progressbar/main/deploy/install.sh | sudo bash
+#   curl -fsSLO https://raw.githubusercontent.com/guibranco/progressbar/main/deploy/install.sh
+#   less install.sh          # review what will run as root
+#   sudo bash install.sh
 #   # or, from a checkout:  sudo deploy/install.sh
 #
 # Environment overrides:
@@ -28,6 +30,8 @@ need() {
 }
 
 [[ "$(id -u)" -eq 0 ]] || { echo "run as root (sudo)" >&2; exit 1; }
+[[ "$DOMAIN" =~ ^[A-Za-z0-9.-]+$ ]] || { echo "invalid DOMAIN: $DOMAIN" >&2; exit 1; }
+[[ "$APP_DIR" =~ ^/[A-Za-z0-9._/-]+$ ]] || { echo "invalid APP_DIR: $APP_DIR" >&2; exit 1; }
 need git; need docker; need nginx; need curl
 docker compose version >/dev/null 2>&1 || { echo "missing: docker compose plugin" >&2; exit 1; }
 
@@ -46,7 +50,8 @@ log "Installing NGINX vhost for $DOMAIN"
 install -m 0644 deploy/nginx/progressbar-cache.conf /etc/nginx/conf.d/progressbar-cache.conf
 sed "s/progress-bar\.xyz/$DOMAIN/g" deploy/nginx/progress-bar.xyz.conf > "/etc/nginx/sites-available/$DOMAIN"
 ln -sfn "/etc/nginx/sites-available/$DOMAIN" "/etc/nginx/sites-enabled/$DOMAIN"
-mkdir -p /var/cache/nginx/progressbar
+# The proxy_cache_path directory is created (and chowned to the worker user)
+# by the NGINX master process on `nginx -t` / reload; no mkdir needed here.
 nginx -t
 systemctl reload nginx
 
@@ -54,7 +59,8 @@ log "Building and starting the container"
 docker compose up -d --build --remove-orphans
 
 log "Registering the systemd unit"
-install -m 0644 deploy/systemd/progressbar.service /etc/systemd/system/progressbar.service
+sed "s#/opt/progressbar/app#$APP_DIR#g" deploy/systemd/progressbar.service > /etc/systemd/system/progressbar.service
+chmod 0644 /etc/systemd/system/progressbar.service
 systemctl daemon-reload
 systemctl enable --now progressbar.service
 
