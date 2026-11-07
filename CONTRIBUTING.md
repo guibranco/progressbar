@@ -34,20 +34,22 @@ Before you begin contributing, please ensure you have the following prerequisite
 
 ## ▶️ Running the API Locally
 
-To start the API locally, use the following command:
+Any of these starts the API on your machine:
 
 ```sh
-vercel dev
+flask --app app run --debug              # http://127.0.0.1:5000/58/
+gunicorn -c gunicorn.conf.py app:app     # http://127.0.0.1:8099/58/ (same as the self-hosted setup)
+docker compose up --build                # http://127.0.0.1:8099/58/ (same image as the self-hosted setup)
+vercel dev                               # emulates the Vercel deployment (needs the Vercel CLI)
 ```
-
-This will run the API in a local environment using Vercel. 🌍
 
 ## 🧪 Testing Your Changes
 
 Before submitting a pull request, test your changes:
 
 ### 🏠 Local Testing
-- Run `vercel dev` and verify that your changes work as expected.
+- Run the unit tests: `pip install pytest && pytest test_api.py`.
+- Start the API (see above) and verify that your changes work as expected.
 - Use **Postman**, **cURL**, or a browser to send requests to the local API. 🌐
 
 ### ⚡ Vercel Preview Deployment

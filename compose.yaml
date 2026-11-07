@@ -1,0 +1,25 @@
+# Self-hosted deployment (Vercel does not use this file).
+#
+#   docker compose up -d --build
+#
+# gunicorn listens on 127.0.0.1:8099 of the host; put NGINX in front of it
+# (see deploy/nginx/) for TLS and response caching.
+services:
+  progressbar:
+    build: .
+    image: progressbar:local
+    container_name: progressbar
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PROGRESSBAR_PORT:-8099}:8099"
+    env_file:
+      - path: ./deploy/env
+        required: false
+    environment:
+      PROGRESSBAR_FORWARDED_ALLOW_IPS: "*"   # only the host's NGINX can reach the port
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

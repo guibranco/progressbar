@@ -1,0 +1,59 @@
+name: Deploy (self-hosted)
+
+# Redeploys the self-hosted instance (deploy/) after CI succeeds on main.
+#
+# Opt-in: nothing runs until the repository variable SELF_HOST_DEPLOY is "true"
+# and these secrets exist:
+#   DEPLOY_SSH_HOST         VM hostname or IP
+#   DEPLOY_SSH_USER         SSH user (owns APP_DIR, member of the docker group)
+#   DEPLOY_SSH_KEY          private key (ed25519) authorised for that user
+#   DEPLOY_SSH_KNOWN_HOSTS  output of `ssh-keyscan -H <host>` (pins the host key)
+#   DEPLOY_SSH_PORT         optional, default 22
+# Optional repository variable SELF_HOST_APP_DIR (default /opt/progressbar/app).
+#
+# The Vercel deployment is independent of this workflow.
+
+on:
+    workflow_run:
+        workflows: ["CI"]
+        types: [completed]
+        branches: [main]
+    workflow_dispatch:
+
+concurrency:
+    group: deploy-self-hosted
+    cancel-in-progress: false
+
+permissions:
+    contents: read
+
+jobs:
+    deploy:
+        name: Deploy to VM
+        if: >-
+            vars.SELF_HOST_DEPLOY == 'true' &&
+            (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        steps:
+            - name: Deploy over SSH
+              env:
+                  SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+                  SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT || '22' }}
+                  SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+                  SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+                  SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+                  APP_DIR: ${{ vars.SELF_HOST_APP_DIR || '/opt/progressbar/app' }}
+              run: |
+                  set -euo pipefail
+                  for v in SSH_HOST SSH_USER SSH_KEY SSH_KNOWN_HOSTS; do
+                    [ -n "${!v}" ] || { echo "::error::missing secret for $v"; exit 1; }
+                  done
+                  mkdir -p ~/.ssh && chmod 700 ~/.ssh
+                  printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+                  printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
+                  ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+                    -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
+                    "$SSH_USER@$SSH_HOST" \
+                    "APP_DIR='$APP_DIR' BRANCH=main bash -c 'cd \"\$APP_DIR\" && git pull --ff-only origin main && ./deploy/update.sh'"

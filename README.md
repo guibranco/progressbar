@@ -1,6 +1,6 @@
 # 🚀 Dynamic Progress Bar
 
-Generates a **dynamic progress bar image** (SVG) using **Python**, deployed freely via **Vercel**.
+Generates a **dynamic progress bar image** (SVG) using **Python**, deployed freely via **Vercel** — or [self-hosted](#-self-hosting) on your own server.
 
 📊 **Preview:**
 
@@ -28,14 +28,17 @@ This service is deployed on **[Vercel](https://vercel.com)** and accessible via 
 | ----------------------- | -------------------------------------------------------------------------- | --------------------- |
 | `title`                 | Adds a title to the progress bar                                           | None                  |
 | `scale`                 | The maximum value that the progress bar represents                         | 100                   |
+| `as_percent`            | With `scale`, show the number as a percentage of the scale                 | `false`               |
 | `prefix`                | A string to add before the progress number                                 | None                  |
 | `suffix`                | A string to add after the progress number                                  | `%`                   |
-| `width`                 | The width of the progress bar in pixels                                    | 100                   |
-| `color`                 | The color of the progress bar (hex code without `#`)                       | `00ff00` (green)      |
-| `progress_background`   | The background color of the progress bar (hex code without `#`)            | `ffffff` (white)      |
-| `progress_number_color` | The color of the progress number (hex code without `#`)                    | `ffffff` (white)      |
+| `width`                 | The width of the progress bar in pixels                                    | `60` with a title, `90` without |
+| `color`                 | The color of the title area (hex code without `#`)                         | `428bca` (blue)       |
+| `progress_background`   | The background color of the progress bar (hex code without `#`)            | `555` (grey)          |
+| `progress_number_color` | The color of the progress number (hex code without `#`)                    | `fff` (white)         |
 | `progress_color`        | The color of the progress bar (hex code without `#`)                       | Depends on percentage |
 | `show_text`             | Whether to display or hide the progress text                               | `true`                |
+| `show_shadow`           | Whether to draw the text shadow                                            | `true`                |
+| `radius`                | Corner radius in pixels                                                    | `4`                   |
 | `style`                 | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge` | `default`             |
 
 ### Examples
@@ -93,17 +96,64 @@ Use query parameters:
 | ----------- | ----------- |
 | **`url`**   | Required. Address of the JSON document (`http` or `https`). Must be URL-encoded in the query string. |
 | **`query`** | Required. [JSONPath](https://goessner.net/articles/JsonPath/) (e.g. `$.items[0].metrics.pct`) or dot form from the root (e.g. `items.0.metrics.pct`). Filter expressions are supported, so you can look up a value by a sibling field instead of a hardcoded index — e.g. `$.progress[?(@.data.language.name=='Spanish')].data.translationProgress`. |
-| **`cache`** | Optional. `Cache-Control` max-age in seconds. Default: none (header not set unless provided and `> 0`). |
+| **`cache`** | Optional. `Cache-Control` max-age in seconds (alias `cacheSeconds`), between `0` and `86400`. Default: `300`. `0` disables caching for that request. |
 
 Any other parameters from the table above (`title`, `scale`, `style`, …) apply the same way as on `/{number}/`.
 
 ---
 
+## ⚡ Caching
+
+Badges are fetched by GitHub's image proxy (camo), browsers and CDNs on every README render, so every response carries a `Cache-Control` header:
+
+| Route             | `Cache-Control`                                                                   |
+| ----------------- | --------------------------------------------------------------------------------- |
+| `/{number}/`      | `public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800` — the SVG is fully determined by the URL, so it is safe to cache for a day |
+| `/dynamic/json/`  | `public, max-age=300, s-maxage=300` by default; override per request with `cache=` |
+| Errors, `/health` | `no-store`                                                                        |
+
+The two defaults can be changed per deployment with the environment variables `PROGRESSBAR_STATIC_CACHE_SECONDS` and `PROGRESSBAR_DYNAMIC_CACHE_SECONDS` (0–86400). Keep in mind that changes to a badge's look can take up to the static TTL to show up in READMEs.
+
+---
+
 ## 🚀 Deployment
+
+### ▲ Vercel
 
 Deploy this project to **Vercel** with a single click:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
+
+The Hobby plan counts every request (cached or not) against its monthly quota, so a popular badge can hit the limit and get the deployment paused. The `Cache-Control` headers above keep most renders away from Vercel; if that is still not enough, self-host it.
+
+### 🏠 Self-hosting
+
+The same code runs anywhere Python runs. The repository ships everything needed for a small VM (1 vCPU / 1 GB is plenty — the app is stateless and serves ~1.8 KB per badge in about a millisecond):
+
+| File                                   | Purpose                                                                                   |
+| -------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `Dockerfile`, `compose.yaml`           | gunicorn (threaded workers) on `127.0.0.1:8099`, non-root, with a Docker healthcheck       |
+| `gunicorn.conf.py`                     | Sizing/logging knobs, all overridable via `PROGRESSBAR_*` environment variables (`deploy/env.example`) |
+| `deploy/nginx/`                        | NGINX reverse proxy with a response cache (`proxy_cache`), so Python only runs on cache misses |
+| `deploy/systemd/`                      | systemd units for the compose stack, or for bare-metal gunicorn without Docker            |
+| `deploy/install.sh`, `deploy/update.sh`| First-time setup and redeploy scripts for the VM                                          |
+| `.github/workflows/deploy.yml`         | Optional CI deploy over SSH after `CI` passes on `main` (opt-in via `SELF_HOST_DEPLOY=true`) |
+
+Quick start on an Ubuntu host with Docker and NGINX installed:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/guibranco/progressbar/main/deploy/install.sh | sudo bash
+sudo certbot --nginx -d progress-bar.xyz   # TLS
+```
+
+Or without Docker:
+
+```sh
+python -m venv venv && venv/bin/pip install -r requirements.txt
+venv/bin/gunicorn -c gunicorn.conf.py app:app   # http://127.0.0.1:8099/58/
+```
+
+`GET /health` returns `{"status": "ok"}` for uptime monitors and load balancers. Put the domain behind a CDN/proxy (for example Cloudflare's free plan) to get edge caching and to be able to switch origins without touching the app.
 
 ---
 
