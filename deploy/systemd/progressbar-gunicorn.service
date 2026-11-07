@@ -1,0 +1,37 @@
+# Bare-metal alternative (no Docker): gunicorn from a virtualenv.
+#
+#   useradd --system --home /opt/progressbar --shell /usr/sbin/nologin progressbar
+#   git clone https://github.com/guibranco/progressbar.git /opt/progressbar/app
+#   python3 -m venv /opt/progressbar/venv
+#   /opt/progressbar/venv/bin/pip install -r /opt/progressbar/app/requirements.txt
+#   mkdir -p /etc/progressbar && cp /opt/progressbar/app/deploy/env.example /etc/progressbar/env
+#   chown -R progressbar:progressbar /opt/progressbar
+#   install -m 0644 deploy/systemd/progressbar-gunicorn.service /etc/systemd/system/progressbar.service
+#   systemctl daemon-reload && systemctl enable --now progressbar
+#
+# Note: on LXC targets drop ProtectSystem/PrivateTmp.
+[Unit]
+Description=ProgressBar badge service (gunicorn)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=progressbar
+Group=progressbar
+WorkingDirectory=/opt/progressbar/app
+EnvironmentFile=-/etc/progressbar/env
+ExecStart=/opt/progressbar/venv/bin/gunicorn -c gunicorn.conf.py app:app
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=15
+Restart=always
+RestartSec=3
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

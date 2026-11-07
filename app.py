@@ -1,6 +1,7 @@
 import codecs
 import ipaddress
 import json
+import os
 import re
 import socket
 from urllib.error import HTTPError, URLError
@@ -26,6 +27,66 @@ JSON_FETCH_MAX_BYTES = 512 * 1024
 JSON_FETCH_TIMEOUT_SEC = 8
 JSON_FETCH_USER_AGENT = "progressbar-dynamic-json/1.0"
 JSON_URL_MAX_LENGTH = 2048
+
+# --- HTTP caching -----------------------------------------------------------
+#
+# Badges are embedded in READMEs and fetched by GitHub's camo proxy, browsers
+# and CDNs on every page render. Without a Cache-Control header every render
+# becomes a request to the origin. The headers below let those intermediaries
+# (and a reverse proxy such as NGINX in front of a self-hosted instance) serve
+# repeated requests themselves.
+#
+# Both values can be tuned per deployment through environment variables
+# (Vercel project settings, docker compose, systemd EnvironmentFile, ...).
+
+MAX_CACHE_SECONDS = 86400
+
+
+def _env_int(name, default, minimum=0, maximum=MAX_CACHE_SECONDS):
+  """Read an integer environment variable, clamped to [minimum, maximum]."""
+  raw = os.environ.get(name)
+  if raw is None or raw.strip() == "":
+    return default
+  try:
+    value = int(raw)
+  except ValueError:
+    return default
+  return max(minimum, min(value, maximum))
+
+
+# /<n>/ is a pure function of the URL, so it is safe to cache for a long time.
+STATIC_CACHE_SECONDS = _env_int("PROGRESSBAR_STATIC_CACHE_SECONDS", 86400)
+# /dynamic/json/ depends on a remote document: short default, overridable per
+# request with ?cache=<seconds> (0 disables caching for that request).
+DYNAMIC_JSON_CACHE_SECONDS = _env_int("PROGRESSBAR_DYNAMIC_CACHE_SECONDS", 300)
+# Lets CDNs/proxies keep serving a static badge while they refresh it.
+STALE_WHILE_REVALIDATE_SECONDS = 7 * 86400
+
+
+def cache_control_value(seconds, stale_while_revalidate=0):
+  """Build a Cache-Control header value for a badge response."""
+  seconds = int(seconds)
+  if seconds <= 0:
+    return "no-store"
+  directives = ["public", "max-age=" + str(seconds), "s-maxage=" + str(seconds)]
+  if int(stale_while_revalidate) > 0:
+    directives.append("stale-while-revalidate=" + str(int(stale_while_revalidate)))
+  return ", ".join(directives)
+
+
+def _set_cache_control(response, seconds, stale_while_revalidate=0):
+  response.headers["Cache-Control"] = cache_control_value(
+    seconds, stale_while_revalidate
+  )
+  return response
+
+
+@app.after_request
+def _never_cache_errors(response):
+  """Flask's own 404/405/500 responses do not go through error_svg_response."""
+  if response.status_code >= 400 and "Cache-Control" not in response.headers:
+    response.headers["Cache-Control"] = "no-store"
+  return response
 
 # Reject obvious non-JSON / active content when Content-Type is present.
 _JSON_FETCH_BLOCK_CT_PREFIXES = (
@@ -244,7 +305,8 @@ def extract_progress_with_jsonpath(doc, selector):
 def error_svg_response(message, status=502):
   template = render_template("dynamic_error.svg", message=message)
   response = make_response(template, status)
-  return _finalize_svg_response(response)
+  response = _finalize_svg_response(response)
+  return _set_cache_control(response, 0)  # never pin a transient failure in a cache
 
 def is_true(value):
   return value.lower() == 'true'
@@ -448,7 +510,8 @@ def get_progress_svg_dynamic_json():
   `query` is a jsonpath-ng expression (e.g. $.items[0].metrics.pct), a dot form
   from the root (e.g. items.0.metrics.pct), or a filter expression
   (e.g. $.progress[?(@.data.language.name=='Spanish')].data.translationProgress).
-  Optional `cache` sets Cache-Control max-age in seconds.
+  Optional `cache` (alias `cacheSeconds`) overrides the Cache-Control max-age in
+  seconds (default DYNAMIC_JSON_CACHE_SECONDS, 0 disables caching).
   Other params match /N/ (title, scale, width, style, …).
   """
   json_url = request.args.get("url")
@@ -470,15 +533,14 @@ def get_progress_svg_dynamic_json():
   template = render_template("progress.svg", **template_fields)
   response = make_response(template)
   response = _finalize_svg_response(response)
+  cache_seconds = DYNAMIC_JSON_CACHE_SECONDS
   cache_raw = request.args.get("cache") or request.args.get("cacheSeconds")
   if cache_raw is not None:
     try:
-      sec = max(0, min(int(cache_raw), 86400))
-      if sec > 0:
-        response.headers["Cache-Control"] = f"public, max-age={sec}"
+      cache_seconds = max(0, min(int(cache_raw), MAX_CACHE_SECONDS))
     except (TypeError, ValueError):
       pass
-  return response
+  return _set_cache_control(response, cache_seconds)
 
 
 @app.route("/<int:progress>/")
@@ -488,11 +550,25 @@ def get_progress_svg(progress):
     template = render_template("progress.svg", **template_fields)
 
     response = make_response(template)
-    return _finalize_svg_response(response)
+    response = _finalize_svg_response(response)
+    # The SVG is fully determined by the URL (path + query string), so camo,
+    # browsers, CDNs and reverse proxies can all serve it from cache.
+    return _set_cache_control(
+        response, STATIC_CACHE_SECONDS, STALE_WHILE_REVALIDATE_SECONDS
+    )
+
+
+@app.route("/health", methods=["GET"], strict_slashes=False)
+def health():
+    """Liveness probe for uptime monitors, reverse proxies and container healthchecks."""
+    response = make_response({"status": "ok"})
+    return _set_cache_control(response, 0)
+
 
 @app.route("/")
 def redirect_to_github():
     return redirect("https://github.com/guibranco/progressbar", code=302)
+
 
 if __name__ == "__main__":
     app.run()

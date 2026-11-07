@@ -3,7 +3,18 @@ from unittest.mock import MagicMock, patch
 from urllib.error import URLError
 
 import pytest
-from app import JSON_FETCH_MAX_BYTES, JSON_URL_MAX_LENGTH, app, fetch_json_document
+import app as app_module
+from app import (
+    DYNAMIC_JSON_CACHE_SECONDS,
+    JSON_FETCH_MAX_BYTES,
+    JSON_URL_MAX_LENGTH,
+    MAX_CACHE_SECONDS,
+    STALE_WHILE_REVALIDATE_SECONDS,
+    STATIC_CACHE_SECONDS,
+    app,
+    cache_control_value,
+    fetch_json_document,
+)
 
 @pytest.fixture
 def client():
@@ -20,6 +31,70 @@ def test_svg_response(client):
 
     assert b"<svg" in response.data
     assert b"</svg>" in response.data
+
+
+def test_static_badge_is_cacheable(client):
+    response = client.get("/28/", query_string={"title": "progress", "style": "flat"})
+    assert response.status_code == 200
+    assert response.headers.get("Cache-Control") == (
+        f"public, max-age={STATIC_CACHE_SECONDS}, s-maxage={STATIC_CACHE_SECONDS}, "
+        f"stale-while-revalidate={STALE_WHILE_REVALIDATE_SECONDS}"
+    )
+
+
+def test_static_badge_cache_can_be_tuned(client, monkeypatch):
+    monkeypatch.setattr(app_module, "STATIC_CACHE_SECONDS", 120)
+    response = client.get("/28/")
+    assert response.headers.get("Cache-Control").startswith("public, max-age=120, s-maxage=120")
+
+
+def test_static_badge_defines_clip_paths(client):
+    response = client.get("/28/", query_string={"title": "clip", "style": "plastic"})
+    assert response.status_code == 200
+    assert b'<clipPath id="clip">' in response.data
+    assert b'<clipPath id="progress_clip">' in response.data
+
+
+def test_framework_errors_are_not_cacheable(client):
+    response = client.get("/not-a-route/")
+    assert response.status_code == 404
+    assert response.headers.get("Cache-Control") == "no-store"
+
+    response = client.post("/health")
+    assert response.status_code == 405
+    assert response.headers.get("Cache-Control") == "no-store"
+
+
+def test_health(client):
+    for path in ("/health", "/health/"):
+        response = client.get(path)
+        assert response.status_code == 200
+        assert response.get_json() == {"status": "ok"}
+        assert response.headers.get("Cache-Control") == "no-store"
+
+
+def test_env_int_parsing(monkeypatch):
+    monkeypatch.setenv("PROGRESSBAR_TEST_INT", "900")
+    assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 900
+    monkeypatch.setenv("PROGRESSBAR_TEST_INT", "999999")
+    assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == MAX_CACHE_SECONDS
+    monkeypatch.setenv("PROGRESSBAR_TEST_INT", "-1")
+    assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 0
+    monkeypatch.setenv("PROGRESSBAR_TEST_INT", "abc")
+    assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 5
+    monkeypatch.setenv("PROGRESSBAR_TEST_INT", "")
+    assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 5
+    monkeypatch.delenv("PROGRESSBAR_TEST_INT")
+    assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 5
+
+
+def test_cache_control_value():
+    assert cache_control_value(0) == "no-store"
+    assert cache_control_value(-5) == "no-store"
+    assert cache_control_value(60) == "public, max-age=60, s-maxage=60"
+    assert cache_control_value(60, 30) == (
+        "public, max-age=60, s-maxage=60, stale-while-revalidate=30"
+    )
 
 
 def test_svg_escapes_title_in_markup(client):
@@ -212,7 +287,7 @@ def test_dynamic_json_cache_sets_cache_control(mock_fetch, client):
         },
     )
     assert response.status_code == 200
-    assert response.headers.get("Cache-Control") == "public, max-age=120"
+    assert response.headers.get("Cache-Control") == "public, max-age=120, s-maxage=120"
 
 
 @patch("app.fetch_json_document")
@@ -227,7 +302,80 @@ def test_dynamic_json_cache_seconds_alias(mock_fetch, client):
         },
     )
     assert response.status_code == 200
-    assert response.headers.get("Cache-Control") == "public, max-age=60"
+    assert response.headers.get("Cache-Control") == "public, max-age=60, s-maxage=60"
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_cache_default(mock_fetch, client):
+    mock_fetch.return_value = {"n": 5}
+    response = client.get(
+        "/dynamic/json/",
+        query_string={"url": "https://example.com/x.json", "query": "$.n"},
+    )
+    assert response.status_code == 200
+    assert response.headers.get("Cache-Control") == (
+        f"public, max-age={DYNAMIC_JSON_CACHE_SECONDS}, s-maxage={DYNAMIC_JSON_CACHE_SECONDS}"
+    )
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_cache_default_can_be_tuned(mock_fetch, client, monkeypatch):
+    monkeypatch.setattr(app_module, "DYNAMIC_JSON_CACHE_SECONDS", 30)
+    mock_fetch.return_value = {"n": 5}
+    response = client.get(
+        "/dynamic/json/",
+        query_string={"url": "https://example.com/x.json", "query": "$.n"},
+    )
+    assert response.headers.get("Cache-Control") == "public, max-age=30, s-maxage=30"
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_cache_zero_disables_caching(mock_fetch, client):
+    mock_fetch.return_value = {"n": 5}
+    response = client.get(
+        "/dynamic/json/",
+        query_string={"url": "https://example.com/x.json", "query": "$.n", "cache": "0"},
+    )
+    assert response.status_code == 200
+    assert response.headers.get("Cache-Control") == "no-store"
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_cache_is_clamped(mock_fetch, client):
+    mock_fetch.return_value = {"n": 5}
+    response = client.get(
+        "/dynamic/json/",
+        query_string={"url": "https://example.com/x.json", "query": "$.n", "cache": "999999"},
+    )
+    assert response.headers.get("Cache-Control") == (
+        f"public, max-age={MAX_CACHE_SECONDS}, s-maxage={MAX_CACHE_SECONDS}"
+    )
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_cache_invalid_value_falls_back_to_default(mock_fetch, client):
+    mock_fetch.return_value = {"n": 5}
+    response = client.get(
+        "/dynamic/json/",
+        query_string={"url": "https://example.com/x.json", "query": "$.n", "cache": "soon"},
+    )
+    assert response.headers.get("Cache-Control") == (
+        f"public, max-age={DYNAMIC_JSON_CACHE_SECONDS}, s-maxage={DYNAMIC_JSON_CACHE_SECONDS}"
+    )
+
+
+@patch("app.fetch_json_document", side_effect=URLError("connection failed"))
+def test_dynamic_json_errors_are_not_cacheable(mock_fetch, client):
+    response = client.get(
+        "/dynamic/json/",
+        query_string={"url": "https://example.com/x.json", "query": "$.x", "cache": "600"},
+    )
+    assert response.status_code == 502
+    assert response.headers.get("Cache-Control") == "no-store"
+
+    response = client.get("/dynamic/json/")
+    assert response.status_code == 400
+    assert response.headers.get("Cache-Control") == "no-store"
 
 
 def test_dynamic_json_disallowed_scheme(client):
