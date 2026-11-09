@@ -1,0 +1,22 @@
+# Docker Compose deployment, managed by systemd so it shows up in
+# `systemctl status progressbar` and comes back after a reboot.
+#
+#   install -m 0644 deploy/systemd/progressbar.service /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now progressbar
+#
+[Unit]
+Description=ProgressBar badge service (docker compose)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/progressbar/app
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+ExecReload=/usr/bin/docker compose up -d --build --remove-orphans
+ExecStop=/usr/bin/docker compose down
+
+[Install]
+WantedBy=multi-user.target

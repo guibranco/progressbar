@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="{{ title_width + progress_width }}" height="{{height}}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
-  <!-- ClipPath to constrain the shadow within the progress bar -->
   <defs>
+    <!-- ClipPath for the whole badge (rounded corners), used by the overlay and title gloss -->
+    <clipPath id="clip">
+      <rect rx="{{ border_radius }}" x="0" width="{{ title_width + progress_width }}" height="100%"/>
+    </clipPath>
+    <!-- ClipPath to constrain the shadow within the progress bar -->
     <clipPath id="progress_clip">
       <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="100%"/>
     </clipPath>

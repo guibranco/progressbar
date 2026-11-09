@@ -57,9 +57,39 @@ jobs:
                 pip install pytest
                 pytest test_api.py
 
+    docker-image:
+        name: Docker image
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+              with:
+                  persist-credentials: false
+
+            - name: Build image
+              run: docker build -t progressbar:ci .
+
+            - name: Smoke test
+              run: |
+                set -euo pipefail
+                docker run -d --name progressbar -p 127.0.0.1:8099:8099 progressbar:ci
+                for i in $(seq 1 20); do
+                  curl -fsS --max-time 2 http://127.0.0.1:8099/health && break
+                  [ "$i" -lt 20 ] || { echo "::error::/health never became ready"; docker logs progressbar; exit 1; }
+                  sleep 2
+                done
+                headers=$(curl -fsS -D - -o /dev/null "http://127.0.0.1:8099/58/?title=ci&style=plastic")
+                echo "$headers"
+                grep -qi "^content-type: image/svg+xml" <<<"$headers"
+                grep -qi "^cache-control: public, max-age=86400" <<<"$headers"
+                [ "$(docker inspect --format '{{.Config.User}}' progressbar)" = "progressbar" ]
+                docker rm -f progressbar
+
     create_release:
         name: Create release
-        needs: [build-tests]
+        needs: [build-tests, docker-image]
         env:
             SEMVER: ${{ needs.build-tests.outputs.semVer }}
         runs-on: ubuntu-latest
