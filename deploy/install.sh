@@ -41,10 +41,12 @@ if [[ ! -d "$APP_DIR/.git" ]]; then
   git clone --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
 fi
 cd "$APP_DIR"
+# On a re-run the checkout already belongs to DEPLOY_USER; trust it before
+# root touches it, or git refuses with "dubious ownership".
+git config --global --add safe.directory "$APP_DIR" >/dev/null 2>&1 || true
 git pull --ff-only origin "$BRANCH"
 [[ -f deploy/env ]] || cp deploy/env.example deploy/env
 chown -R "$DEPLOY_USER": "$APP_DIR"
-git config --global --add safe.directory "$APP_DIR" >/dev/null 2>&1 || true
 
 log "Installing NGINX vhost for $DOMAIN"
 install -m 0644 deploy/nginx/progressbar-cache.conf /etc/nginx/conf.d/progressbar-cache.conf

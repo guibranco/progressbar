@@ -51,6 +51,7 @@ jobs:
                   SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
                   APP_DIR: ${{ vars.SELF_HOST_APP_DIR || '/opt/progressbar/app' }}
                   DEPLOY_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+                  EVENT_NAME: ${{ github.event_name }}
               run: |
                   set -euo pipefail
                   for v in SSH_HOST SSH_USER SSH_KEY SSH_KNOWN_HOSTS; do
@@ -62,9 +63,16 @@ jobs:
                   printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
                   printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
                   echo "Deploying $DEPLOY_SHA to $SSH_HOST:$APP_DIR"
-                  # Bring the checkout to the target commit first so the update
-                  # script that runs is the one from that commit.
+                  # CI runs for two pushes can finish out of order; a workflow_run
+                  # deploy is skipped unless its commit is still the tip of main,
+                  # so an older commit never replaces a newer one (the newer
+                  # commit's own CI run deploys it). workflow_dispatch is not
+                  # restricted, so operators can redeploy any commit on purpose.
+                  # The checkout is moved to the target commit first so the
+                  # update script that runs is the one from that commit.
                   ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
                     -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
                     "$SSH_USER@$SSH_HOST" \
-                    "cd '$APP_DIR' && git fetch --prune origin main && git checkout -q main && git reset -q --hard '$DEPLOY_SHA' && APP_DIR='$APP_DIR' BRANCH=main DEPLOY_SHA='$DEPLOY_SHA' ./deploy/update.sh"
+                    "cd '$APP_DIR' && git fetch --prune origin main && \
+                     if [ '$EVENT_NAME' = workflow_run ] && [ \"\$(git rev-parse origin/main)\" != '$DEPLOY_SHA' ]; then echo 'Skipping: $DEPLOY_SHA is no longer the tip of main'; exit 0; fi && \
+                     git checkout -q main && git reset -q --hard '$DEPLOY_SHA' && APP_DIR='$APP_DIR' BRANCH=main DEPLOY_SHA='$DEPLOY_SHA' ./deploy/update.sh"
