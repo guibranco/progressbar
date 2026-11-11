@@ -1,4 +1,5 @@
 import json
+import re
 from unittest.mock import MagicMock, patch
 from urllib.error import URLError
 
@@ -14,6 +15,8 @@ from app import (
     app,
     cache_control_value,
     fetch_json_document,
+    get_fill_geometry,
+    parse_progress_origin,
 )
 
 @pytest.fixture
@@ -629,3 +632,136 @@ def test_fetch_json_malformed_json_raises(mock_open):
     mock_open.return_value = ctx
     with pytest.raises(json.JSONDecodeError):
         fetch_json_document("https://example.com/x.json")
+
+
+# --- Negative values and fill origin (issue #64) -------------------------------
+
+FILL_RECT = re.compile(
+    rb'Progress fill.*?<rect rx="[^"]*" x="([^"]+)" width="([^"]+)" height="100%" fill="#([0-9a-fA-F]+)"',
+    re.DOTALL,
+)
+
+
+def _fill(response):
+    """Return (x, width, color) of the progress fill rect."""
+    match = FILL_RECT.search(response.data)
+    assert match, response.data
+    return float(match.group(1)), float(match.group(2)), match.group(3).decode()
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    [
+        (None, "left"),
+        ("", "left"),
+        ("left", "left"),
+        ("center", "center"),
+        ("middle", "center"),
+        ("Centre", "center"),
+        ("right", "right"),
+        ("bogus", "left"),
+    ],
+)
+def test_parse_progress_origin(value, expected):
+    assert parse_progress_origin(value) == expected
+
+
+@pytest.mark.parametrize(
+    "progress, origin, expected",
+    [
+        (50, "left", (0, 50)),
+        (-50, "left", (0, 50)),
+        (150, "left", (0, 100)),
+        (50, "right", (50, 50)),
+        (-25, "right", (75, 25)),
+        (0, "center", (50, 0)),
+        (50, "center", (50, 25)),
+        (-50, "center", (25, 25)),
+        (100, "center", (50, 50)),
+        (-100, "center", (0, 50)),
+        (-500, "center", (0, 50)),
+    ],
+)
+def test_get_fill_geometry(progress, origin, expected):
+    assert get_fill_geometry(progress, 100, 100, 0, origin) == expected
+
+
+def test_get_fill_geometry_offsets_by_title_width():
+    assert get_fill_geometry(-50, 100, 100, 40, "center") == (65, 25)
+    assert get_fill_geometry(50, 100, 100, 40, "center") == (90, 25)
+
+
+def test_negative_value_route_is_accepted(client):
+    response = client.get("/-28/")
+    assert response.status_code == 200
+    assert response.content_type == "image/svg+xml"
+    assert b"-28%" in response.data
+
+
+def test_negative_value_default_origin_fills_absolute_value(client):
+    response = client.get("/-50/", query_string={"width": "100"})
+    x, width, _ = _fill(response)
+    assert (x, width) == (0, 50)
+
+
+def test_center_origin_positive_grows_right(client):
+    response = client.get("/50/", query_string={"width": "100", "origin": "center"})
+    x, width, _ = _fill(response)
+    assert (x, width) == (50, 25)
+    assert b"Zero axis" in response.data
+
+
+def test_center_origin_negative_grows_left(client):
+    response = client.get("/-50/", query_string={"width": "100", "origin": "center"})
+    x, width, color = _fill(response)
+    assert (x, width) == (25, 25)
+    assert color == "d9534f"
+
+
+def test_center_origin_with_title(client):
+    response = client.get(
+        "/-100/", query_string={"width": "100", "origin": "middle", "title": "delta"}
+    )
+    title_width = 10 + 6 * len("delta")
+    x, width, _ = _fill(response)
+    assert (x, width) == (title_width, 50)
+
+
+def test_right_origin_grows_from_right(client):
+    response = client.get("/25/", query_string={"width": "100", "origin": "right"})
+    x, width, _ = _fill(response)
+    assert (x, width) == (75, 25)
+    assert b"Zero axis" not in response.data
+
+
+def test_negative_color_applies_only_to_negative_values(client):
+    query = {"origin": "center", "negative_color": "ff0000", "progress_color": "00ff00"}
+    _, _, negative = _fill(client.get("/-10/", query_string=query))
+    _, _, positive = _fill(client.get("/10/", query_string=query))
+    assert negative == "ff0000"
+    assert positive == "00ff00"
+
+
+def test_non_positive_scale_falls_back_to_default(client):
+    for scale in ("0", "-10"):
+        response = client.get("/50/", query_string={"scale": scale, "width": "100"})
+        assert response.status_code == 200
+        _, width, _ = _fill(response)
+        assert width == 50
+
+
+@patch("app.fetch_json_document")
+def test_dynamic_json_negative_value_center_origin(mock_fetch, client):
+    mock_fetch.return_value = {"delta": -40}
+    response = client.get(
+        "/dynamic/json/",
+        query_string={
+            "url": "https://example.com/data.json",
+            "query": "delta",
+            "origin": "center",
+            "width": "100",
+        },
+    )
+    assert response.status_code == 200
+    x, width, _ = _fill(response)
+    assert (x, width) == (30, 20)

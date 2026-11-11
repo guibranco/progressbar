@@ -410,6 +410,49 @@ def get_style_fields(style):
     return style_templates.get(style) if style in style_templates else {}
 
 
+PROGRESS_ORIGINS = ("left", "center", "right")
+_PROGRESS_ORIGIN_ALIASES = {"middle": "center", "centre": "center"}
+
+
+def parse_progress_origin(value):
+    """Normalize the ``origin`` query parameter; unknown values fall back to left."""
+    origin = (value or "").strip().lower()
+    origin = _PROGRESS_ORIGIN_ALIASES.get(origin, origin)
+    return origin if origin in PROGRESS_ORIGINS else "left"
+
+
+def get_fill_geometry(progress, scale, progress_width, title_width, origin="left"):
+    """
+    Compute the x position and width of the progress fill.
+
+    The fill length is proportional to the absolute value of ``progress``
+    (clamped to the full bar), so negative values are always drawable:
+
+    - ``left``: grows from the left edge to the right (default behaviour).
+    - ``right``: grows from the right edge to the left.
+    - ``center``: the bar's middle is zero; positive values grow to the right
+      and negative values grow to the left, each side spanning ``scale``.
+      This mimics Excel's conditional-formatting data bars.
+
+    The result is a ``(fill_x, fill_width)`` tuple in pixels.
+    """
+    ratio = min(abs(progress) / scale, 1) if scale > 0 else 0
+
+    if origin == "center":
+        half = progress_width / 2
+        fill_width = ratio * half
+        start = title_width + half
+        fill_x = start - fill_width if progress < 0 else start
+    elif origin == "right":
+        fill_width = ratio * progress_width
+        fill_x = title_width + progress_width - fill_width
+    else:
+        fill_width = ratio * progress_width
+        fill_x = title_width
+
+    return round(fill_x, 2), round(fill_width, 2)
+
+
 def format_progress_text(progress):
     if isinstance(progress, float) and progress.is_integer():
         return int(progress)
@@ -440,9 +483,11 @@ def get_template_fields(progress):
 
     scale = 100
     try:
-        scale = int(request.args.get("scale"))
-        if request.args.get("as_percent"):
-            progress_text = int(progress / scale * 100)
+        requested_scale = int(request.args.get("scale"))
+        if requested_scale > 0:
+            scale = requested_scale
+            if request.args.get("as_percent"):
+                progress_text = int(progress / scale * 100)
     except (TypeError, ValueError):
         pass
 
@@ -487,10 +532,25 @@ def get_template_fields(progress):
     else:
         clean_req_params["title_width"] = 0
 
-    if "progress_color" not in clean_req_params:
+    negative_color = request.args.get("negative_color")
+    if progress < 0 and negative_color:
+        clean_req_params["progress_color"] = negative_color
+    elif "progress_color" not in clean_req_params:
         clean_req_params["progress_color"] = style.get("progress_color") or default.get(
             "progress_color", get_progress_color(progress, scale)
         )
+
+    origin = parse_progress_origin(request.args.get("origin"))
+    clean_req_params["origin"] = origin
+    fill_x, fill_width = get_fill_geometry(
+        progress,
+        scale,
+        clean_req_params["progress_width"],
+        clean_req_params["title_width"],
+        origin,
+    )
+    clean_req_params["fill_x"] = fill_x
+    clean_req_params["fill_width"] = fill_width
 
     if style.get("title_anchor") == "left":
         clean_req_params["title_pos_x"] = 5
@@ -543,7 +603,7 @@ def get_progress_svg_dynamic_json():
   return _set_cache_control(response, cache_seconds)
 
 
-@app.route("/<int:progress>/")
+@app.route("/<int(signed=True):progress>/", methods=["GET"])
 def get_progress_svg(progress):
     template_fields = get_template_fields(progress)
 

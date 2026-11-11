@@ -40,6 +40,8 @@ This service is deployed on **[Vercel](https://vercel.com)** and accessible via 
 | `show_shadow`           | Whether to draw the text shadow                                            | `true`                |
 | `radius`                | Corner radius in pixels                                                    | `4`                   |
 | `style`                 | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge` | `default`             |
+| `origin`                | Where the bar fills from: `left`, `center` (alias `middle`) or `right`. With `center`, zero is the middle of the bar — positive values grow right and negative values grow left (like Excel data bars) | `left` |
+| `negative_color`        | Color of the bar for negative values (hex code without `#`). Overrides `progress_color` and the style color when the value is below zero | Depends on percentage |
 
 ### Examples
 
@@ -66,6 +68,21 @@ Below are several examples showcasing different ways to generate progress bars.
 | ![Progress from JSON](https://progress-bar.xyz/dynamic/json/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fguibranco%2Fprogressbar%2Fmain%2Fdocs%2Fdynamic-json-sample.json&query=demo.metrics.translationPercent) | [https://progress-bar.xyz/dynamic/json/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fguibranco%2Fprogressbar%2Fmain%2Fdocs%2Fdynamic-json-sample.json&query=demo.metrics.translationPercent](https://progress-bar.xyz/dynamic/json/?url=https%3A%2F%2Fraw.githubusercontent.com%2Fguibranco%2Fprogressbar%2Fmain%2Fdocs%2Fdynamic-json-sample.json&query=demo.metrics.translationPercent) |
 
 ---
+
+### ➖ Negative values and data bars
+
+Negative numbers are accepted (e.g. `/-28/`). The bar length is the absolute value relative to `scale`, and the sign is kept in the text.
+Use `origin=center` to get Excel-style data bars, which are handy for a column of positive and negative values in a Markdown table: each side of the middle axis spans `scale`.
+
+| 📌 Preview | 🌐 URL |
+| ---------- | ------ |
+| ![Progress](https://progress-bar.xyz/-28/) | [https://progress-bar.xyz/-28/](https://progress-bar.xyz/-28/) |
+| ![Progress](https://progress-bar.xyz/75/?origin=center&title=delta) | [https://progress-bar.xyz/75/?origin=center&title=delta](https://progress-bar.xyz/75/?origin=center&title=delta) |
+| ![Progress](https://progress-bar.xyz/-40/?origin=center&title=delta) | [https://progress-bar.xyz/-40/?origin=center&title=delta](https://progress-bar.xyz/-40/?origin=center&title=delta) |
+| ![Progress](https://progress-bar.xyz/-30/?origin=center&scale=50&width=120&progress_color=3b82f6&negative_color=d9534f&suffix=) | [https://progress-bar.xyz/-30/?origin=center&scale=50&width=120&progress_color=3b82f6&negative_color=d9534f&suffix=](https://progress-bar.xyz/-30/?origin=center&scale=50&width=120&progress_color=3b82f6&negative_color=d9534f&suffix=) |
+| ![Progress](https://progress-bar.xyz/60/?origin=right&title=rtl) | [https://progress-bar.xyz/60/?origin=right&title=rtl](https://progress-bar.xyz/60/?origin=right&title=rtl) |
+
+`origin` and `negative_color` also work with [`/dynamic/json/`](#-progress-from-a-json-url), so a negative number read from a JSON document renders the same way.
 
 ## 🎨 Styles
 

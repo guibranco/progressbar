@@ -25,10 +25,21 @@
   <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ progress_width }}" height="100%" fill="#{{ progress_background }}" />
   
   <!-- Progress fill with the same border radius to avoid sharp corners -->
-  <rect rx="{{ border_radius }}" x="{{ title_width }}" width="{{ [progress/scale, 1] | min * progress_width | int }}" height="100%" fill="#{{ progress_color }}" />
-  
+  {% if origin == 'left' %}
+  <rect rx="{{ border_radius }}" x="{{ fill_x }}" width="{{ fill_width }}" height="100%" fill="#{{ progress_color }}" />
+  {% else %}
+  <!-- Square inner end at the axis; the outer end is rounded by the bar's clip path -->
+  <rect rx="0" x="{{ fill_x }}" width="{{ fill_width }}" height="100%" fill="#{{ progress_color }}" clip-path="url(#progress_clip)" />
+  {% endif %}
+
   {% if title %}
-    <rect x="{{ title_width }}" y="0" width="4" height="100%" fill="#{{ progress_color }}" />
+    <!-- Squares off the join between the title and the bar -->
+    <rect x="{{ title_width }}" y="0" width="4" height="100%" fill="#{{ progress_color if origin == 'left' or (fill_width > 0 and fill_x <= title_width) else progress_background }}" />
+  {% endif %}
+
+  {% if origin == 'center' %}
+    <!-- Zero axis for centered (data bar) mode -->
+    <rect x="{{ title_width + progress_width / 2 - 0.5 }}" y="0" width="1" height="100%" fill="#{{ progress_number_color }}" fill-opacity=".5" />
   {% endif %}
   
   <!-- Apply the clipping path to keep everything inside the border radius -->
