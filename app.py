@@ -422,7 +422,8 @@ def parse_progress_origin(value):
 
 
 def get_fill_geometry(progress, scale, progress_width, title_width, origin="left"):
-    """Compute the x position and width of the progress fill.
+    """
+    Compute the x position and width of the progress fill.
 
     The fill length is proportional to the absolute value of ``progress``
     (clamped to the full bar), so negative values are always drawable:
@@ -433,8 +434,7 @@ def get_fill_geometry(progress, scale, progress_width, title_width, origin="left
       and negative values grow to the left, each side spanning ``scale``.
       This mimics Excel's conditional-formatting data bars.
 
-    Returns:
-        tuple: ``(fill_x, fill_width)`` in pixels.
+    The result is a ``(fill_x, fill_width)`` tuple in pixels.
     """
     ratio = min(abs(progress) / scale, 1) if scale > 0 else 0
 
