@@ -603,7 +603,7 @@ def get_progress_svg_dynamic_json():
   return _set_cache_control(response, cache_seconds)
 
 
-@app.route("/<int(signed=True):progress>/")
+@app.route("/<int(signed=True):progress>/", methods=["GET"])
 def get_progress_svg(progress):
     template_fields = get_template_fields(progress)
 
