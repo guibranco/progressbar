@@ -74,7 +74,11 @@ jobs:
                 headers=$(curl -fsS -D - -o /dev/null "http://127.0.0.1:8099/58/?title=ci&style=plastic")
                 echo "$headers"
                 grep -qi "^content-type: image/svg+xml" <<<"$headers"
-                grep -qi "^cache-control: public, max-age=86400" <<<"$headers"
+                grep -qi "^cache-control: public, max-age=604800" <<<"$headers"
+                fav=$(curl -fsS -D - -o /dev/null "http://127.0.0.1:8099/favicon.ico")
+                echo "$fav"
+                grep -qi "^content-type: image/vnd.microsoft.icon" <<<"$fav"
+                grep -qi "^cache-control: public, max-age=2592000" <<<"$fav"
                 [ "$(docker inspect --format '{{.Config.User}}' progressbar)" = "progressbar" ]
                 docker rm -f progressbar
           
