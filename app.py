@@ -8,7 +8,14 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from flask import Flask, make_response, redirect, render_template, request
+from flask import (
+  Flask,
+  make_response,
+  redirect,
+  render_template,
+  request,
+  send_from_directory,
+)
 from jsonpath_ng.exceptions import JsonPathParserError
 from jsonpath_ng.ext import parse
 
@@ -623,6 +630,15 @@ def health():
     """Liveness probe for uptime monitors, reverse proxies and container healthchecks."""
     response = make_response({"status": "ok"})
     return _set_cache_control(response, 0)
+
+
+@app.route("/favicon.ico", methods=["GET"])
+def favicon():
+    """Serve the favicon so browsers stop logging 404s for /favicon.ico."""
+    response = send_from_directory(
+        app.static_folder, "favicon.ico", mimetype="image/vnd.microsoft.icon"
+    )
+    return _set_cache_control(response, MAX_CACHE_SECONDS, STALE_WHILE_REVALIDATE_SECONDS)
 
 
 @app.route("/")

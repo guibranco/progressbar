@@ -76,6 +76,13 @@ def test_health(client):
         assert response.headers.get("Cache-Control") == "no-store"
 
 
+def test_favicon(client):
+    response = client.get("/favicon.ico")
+    assert response.status_code == 200
+    assert response.mimetype == "image/vnd.microsoft.icon"
+    assert "max-age=86400" in response.headers["Cache-Control"]
+
+
 def test_env_int_parsing(monkeypatch):
     monkeypatch.setenv("PROGRESSBAR_TEST_INT", "900")
     assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 900

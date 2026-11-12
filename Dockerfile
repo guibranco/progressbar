@@ -20,6 +20,7 @@ RUN pip install --require-hashes --only-binary :all: -r requirements.txt
 
 COPY app.py gunicorn.conf.py ./
 COPY templates ./templates
+COPY static ./static
 
 RUN useradd --system --uid 10001 --no-create-home progressbar
 USER progressbar
