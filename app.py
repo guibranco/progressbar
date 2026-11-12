@@ -46,7 +46,12 @@ JSON_URL_MAX_LENGTH = 2048
 # Both values can be tuned per deployment through environment variables
 # (Vercel project settings, docker compose, systemd EnvironmentFile, ...).
 
-MAX_CACHE_SECONDS = 86400
+DAY_SECONDS = 86400
+# Upper bound for /dynamic/json/ (env default and ?cache=), which depends on a
+# remote document and so should never be cached for long.
+MAX_CACHE_SECONDS = DAY_SECONDS
+# Upper bound for /<n>/ badges, which never change for a given URL.
+MAX_STATIC_CACHE_SECONDS = 30 * DAY_SECONDS
 
 
 def _env_int(name, default, minimum=0, maximum=MAX_CACHE_SECONDS):
@@ -62,12 +67,18 @@ def _env_int(name, default, minimum=0, maximum=MAX_CACHE_SECONDS):
 
 
 # /<n>/ is a pure function of the URL, so it is safe to cache for a long time.
-STATIC_CACHE_SECONDS = _env_int("PROGRESSBAR_STATIC_CACHE_SECONDS", 86400)
+STATIC_CACHE_SECONDS = _env_int(
+  "PROGRESSBAR_STATIC_CACHE_SECONDS",
+  7 * DAY_SECONDS,
+  maximum=MAX_STATIC_CACHE_SECONDS,
+)
 # /dynamic/json/ depends on a remote document: short default, overridable per
 # request with ?cache=<seconds> (0 disables caching for that request).
 DYNAMIC_JSON_CACHE_SECONDS = _env_int("PROGRESSBAR_DYNAMIC_CACHE_SECONDS", 300)
 # Lets CDNs/proxies keep serving a static badge while they refresh it.
-STALE_WHILE_REVALIDATE_SECONDS = 7 * 86400
+STALE_WHILE_REVALIDATE_SECONDS = 7 * DAY_SECONDS
+# The favicon only changes when the file in static/ is replaced.
+FAVICON_CACHE_SECONDS = 30 * DAY_SECONDS
 
 
 def cache_control_value(seconds, stale_while_revalidate=0):
@@ -638,7 +649,9 @@ def favicon():
     response = send_from_directory(
         app.static_folder, "favicon.ico", mimetype="image/vnd.microsoft.icon"
     )
-    return _set_cache_control(response, MAX_CACHE_SECONDS, STALE_WHILE_REVALIDATE_SECONDS)
+    return _set_cache_control(
+        response, FAVICON_CACHE_SECONDS, STALE_WHILE_REVALIDATE_SECONDS
+    )
 
 
 @app.route("/")
