@@ -125,11 +125,12 @@ Badges are fetched by GitHub's image proxy (camo), browsers and CDNs on every RE
 
 | Route             | `Cache-Control`                                                                   |
 | ----------------- | --------------------------------------------------------------------------------- |
-| `/{number}/`      | `public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800` — the SVG is fully determined by the URL, so it is safe to cache for a day |
+| `/{number}/`      | `public, max-age=604800, s-maxage=604800, stale-while-revalidate=604800` — the SVG is fully determined by the URL, so it is safe to cache for a week |
 | `/dynamic/json/`  | `public, max-age=300, s-maxage=300` by default; override per request with `cache=` |
+| `/favicon.ico`    | `public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800` (30 days) |
 | Errors, `/health` | `no-store`                                                                        |
 
-The two defaults can be changed per deployment with the environment variables `PROGRESSBAR_STATIC_CACHE_SECONDS` and `PROGRESSBAR_DYNAMIC_CACHE_SECONDS` (0–86400). Keep in mind that changes to a badge's look can take up to the static TTL (one day) to show up in READMEs — and a CDN that honours `stale-while-revalidate` may keep serving the previous version for up to another 7 days while it refreshes the entry in the background.
+The two defaults can be changed per deployment with the environment variables `PROGRESSBAR_STATIC_CACHE_SECONDS` (0–2592000, default 7 days) and `PROGRESSBAR_DYNAMIC_CACHE_SECONDS` (0–86400). Keep in mind that changes to a badge's look can take up to the configured static TTL (7 days by default, up to 30 days if `PROGRESSBAR_STATIC_CACHE_SECONDS` is raised) to show up in READMEs — and a CDN that honours `stale-while-revalidate` may keep serving the previous version for up to another 7 days while it refreshes the entry in the background.
 
 ---
 

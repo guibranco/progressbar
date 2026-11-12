@@ -37,6 +37,7 @@ def test_svg_response(client):
 
 
 def test_static_badge_is_cacheable(client):
+    assert STATIC_CACHE_SECONDS == 7 * 86400  # default: one week
     response = client.get("/28/", query_string={"title": "progress", "style": "flat"})
     assert response.status_code == 200
     assert response.headers.get("Cache-Control") == (
@@ -76,6 +77,14 @@ def test_health(client):
         assert response.headers.get("Cache-Control") == "no-store"
 
 
+def test_favicon(client):
+    response = client.get("/favicon.ico")
+    assert response.status_code == 200
+    assert response.mimetype == "image/vnd.microsoft.icon"
+    assert response.data.startswith(b"\x00\x00\x01\x00")  # ICO header
+    assert "max-age=2592000" in response.headers["Cache-Control"]
+
+
 def test_env_int_parsing(monkeypatch):
     monkeypatch.setenv("PROGRESSBAR_TEST_INT", "900")
     assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 900
@@ -87,6 +96,13 @@ def test_env_int_parsing(monkeypatch):
     assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 5
     monkeypatch.setenv("PROGRESSBAR_TEST_INT", "")
     assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 5
+    monkeypatch.setenv("PROGRESSBAR_TEST_INT", "9999999")
+    assert (
+        app_module._env_int(
+            "PROGRESSBAR_TEST_INT", 5, maximum=app_module.MAX_STATIC_CACHE_SECONDS
+        )
+        == 30 * 86400
+    )
     monkeypatch.delenv("PROGRESSBAR_TEST_INT")
     assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 5
 
