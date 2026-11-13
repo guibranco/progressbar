@@ -3,7 +3,7 @@
 #   docker build -t progressbar .
 #   docker run --rm -p 127.0.0.1:8099:8099 progressbar
 #
-FROM python:3.12-slim
+FROM python:3.15-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
