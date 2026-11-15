@@ -1,0 +1,18 @@
+# Render Blueprint, used by the "Deploy to Render" button in README.md.
+# https://render.com/docs/blueprint-spec
+#
+# Builds the same Dockerfile used for self-hosting; gunicorn listens on
+# 0.0.0.0:8099 inside the container and Render routes traffic to $PORT.
+services:
+  - type: web
+    name: progressbar
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "8099"
+      - key: PROGRESSBAR_FORWARDED_ALLOW_IPS
+        value: "*"
