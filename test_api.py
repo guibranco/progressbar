@@ -818,6 +818,15 @@ def test_glass_layers_only_on_neo_glass(client):
 
 @pytest.mark.parametrize(
     "progress, expected",
+    [(10, "c62828"), (50, "b45309"), (90, "2e7d32")],
+)
+def test_thin_rounded_uses_high_contrast_palette(client, progress, expected):
+    body = client.get(f"/{progress}/", query_string={"style": "thin-rounded"}).data.decode()
+    assert f'fill="#{expected}"' in body
+
+
+@pytest.mark.parametrize(
+    "progress, expected",
     [(10, "e07a5f"), (50, "f2cc8f"), (90, "81b29a")],
 )
 def test_minimal_matte_uses_muted_palette(client, progress, expected):

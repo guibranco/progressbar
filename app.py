@@ -329,6 +329,7 @@ def error_svg_response(message, status=502):
 def is_true(value):
   return value.lower() == 'true'
 
+
 DEFAULT_PROGRESS_PALETTE = ("d9534f", "f0ad4e", "5cb85c")
 
 
@@ -442,6 +443,9 @@ def get_style_fields(style):
             "text_y": 10,
             "title_color": "424242",
             "progress_background": "757575",
+            # Darker than the default palette so 9px white text without a
+            # shadow keeps >= 4.5:1 contrast on the fill and the track.
+            "palette": ("c62828", "b45309", "2e7d32"),
             "show_shadow": False,
             "gradient": False,
         },
