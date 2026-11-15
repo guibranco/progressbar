@@ -1,6 +1,9 @@
 # 🚀 Dynamic Progress Bar
 
-Generates a **dynamic progress bar image** (SVG) using **Python**, deployed freely via **Vercel** — or [self-hosted](#-self-hosting) on your own server.
+Generates a **dynamic progress bar image** (SVG) using **Python**, served behind **Cloudflare** from **Render** (with **Vercel** as a fallback) — or [self-hosted](#-self-hosting-your-own-server) on your own server.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/guibranco/progressbar)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fguibranco%2Fprogressbar)
 
 📊 **Preview:**
 
@@ -18,7 +21,21 @@ Inspired by [![fredericojordan/progress-bar](https://img.shields.io/badge/freder
 
 ## 🛠️ Usage
 
-This service is deployed on **[Vercel](https://vercel.com)** and accessible via the domain **[progress-bar.xyz](https://progress-bar.xyz)**.
+The public instance is available at **[progress-bar.xyz](https://progress-bar.xyz)** — just use `https://progress-bar.xyz/{number}/` as an image URL in any Markdown or HTML.
+
+### 🌐 Hosting
+
+| Layer       | Provider                                   | Status                                                                 |
+| ----------- | ------------------------------------------ | ---------------------------------------------------------------------- |
+| DNS / CDN   | **[Cloudflare](https://www.cloudflare.com)** (free plan) | ✅ Active — TLS, edge caching of the SVGs, origin hidden behind the proxy |
+| Origin      | **[Render](https://render.com)**            | ✅ Active — primary, auto-deploys from `main`                           |
+| Fallback    | **[Vercel](https://vercel.com)**            | ⏸️ Paused — see below                                                  |
+
+Because the domain is on Cloudflare, switching origins (Render ↔ Vercel ↔ a self-hosted VM) is a single DNS change, with no change to the badge URLs.
+
+> [!NOTE]
+> **Why Vercel is paused:** the Hobby plan counts every request — cached or not — against a monthly quota (1M requests). Badges are re-fetched by GitHub's image proxy on every README render, and the badge route used to send no `Cache-Control` header, so the quota ran out and Vercel disabled the deployment (`HTTP 402 DEPLOYMENT_DISABLED`), taking the service offline — reported in [#276](https://github.com/guibranco/progressbar/issues/276).
+> [#278](https://github.com/guibranco/progressbar/pull/278) fixed the root cause by adding [cache headers](#-caching), a `/health` endpoint and a self-hosting runtime; the service was then moved to Render behind Cloudflare. The Vercel deployment is kept as a fallback and still works from the same code.
 
 ---
 
@@ -137,15 +154,27 @@ The two defaults can be changed per deployment with the environment variables `P
 
 ## 🚀 Deployment
 
+You can run your own instance in one click on Render or Vercel, or on any server that runs Docker or Python. The app is stateless and needs no database or secrets.
+
+### 🟣 Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/guibranco/progressbar)
+
+The button reads [`render.yaml`](render.yaml) and creates a **Docker** web service from the repository's `Dockerfile`, with `/health` as the health check and auto-deploy on every push.
+
+- On the **Free** instance type the service spins down after ~15 minutes without traffic, and the next request waits for a cold start (up to about a minute). Putting a CDN such as Cloudflare in front (so most badges are served from its cache), pinging `/health` periodically, or using a paid instance type avoids that.
+- **Custom domain on Cloudflare:** add the domain in Render (*Settings → Custom Domains*), create a `CNAME` pointing to `<service>.onrender.com` in Cloudflare with the proxy **off** (*DNS only*) until Render verifies it and issues the certificate, then turn the proxy on and use SSL mode **Full (strict)**.
+
 ### ▲ Vercel
 
-Deploy this project to **Vercel** with a single click:
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fguibranco%2Fprogressbar)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/guibranco/progressbar)
+Vercel uses [`vercel.json`](vercel.json) and the `@vercel/python` runtime; no extra configuration is needed.
 
-The Hobby plan counts every request (cached or not) against its monthly quota, so a popular badge can hit the limit and get the deployment paused. The `Cache-Control` headers above keep most renders away from Vercel; if that is still not enough, self-host it.
+> [!WARNING]
+> The Hobby plan counts every request (cached or not) against its monthly quota. When it runs out, Vercel pauses the deployment and it stays offline until you unpause it in the dashboard or upgrade — this is what happened to the public instance ([#276](https://github.com/guibranco/progressbar/issues/276)). The [cache headers](#-caching) keep most renders away from Vercel, but for a popular badge prefer Render or your own server.
 
-### 🏠 Self-hosting
+### 🏠 Self-hosting (your own server)
 
 The same code runs anywhere Python runs. The repository ships everything needed for a small VM (1 vCPU / 1 GB is plenty — the app is stateless and serves ~1.8 KB per badge in about a millisecond):
 
@@ -158,23 +187,58 @@ The same code runs anywhere Python runs. The repository ships everything needed 
 | `deploy/install.sh`, `deploy/update.sh`| First-time setup and redeploy scripts for the VM                                          |
 | `.github/workflows/deploy.yml`         | Optional CI deploy over SSH after `CI` passes on `main` (opt-in via `SELF_HOST_DEPLOY=true`) |
 
-Quick start on an Ubuntu host with Docker and NGINX installed (`DOMAIN=` and `APP_DIR=` can be exported first to override the defaults):
+#### 1. Prerequisites
+
+An Ubuntu host (tested on 24.04) with `git`, `curl`, Docker with the compose plugin, and NGINX, plus a DNS record for your domain pointing to the server:
+
+```sh
+sudo apt update && sudo apt install -y git curl nginx certbot python3-certbot-nginx
+curl -fsSL https://get.docker.com | sudo sh
+```
+
+#### 2. Install
+
+`install.sh` clones the repository to `/opt/progressbar/app`, installs the NGINX vhost and cache, builds and starts the container, registers the systemd unit and runs a smoke test. Export `DOMAIN` (and optionally `APP_DIR`, `BRANCH`, `DEPLOY_USER`) to override the defaults:
 
 ```sh
 curl -fsSLO https://raw.githubusercontent.com/guibranco/progressbar/main/deploy/install.sh
 less install.sh                            # review before running it as root
-sudo bash install.sh
-sudo certbot --nginx -d progress-bar.xyz   # TLS
+sudo DOMAIN=badges.example.com bash install.sh
+sudo certbot --nginx -d badges.example.com # TLS
 ```
 
-Or without Docker:
+Optional settings (cache TTLs, gunicorn workers/threads, logging) go in `deploy/env` — copy [`deploy/env.example`](deploy/env.example).
+
+#### 3. Verify
 
 ```sh
-python -m venv venv && venv/bin/pip install -r requirements.txt
+curl -fsS http://127.0.0.1:8099/health                         # {"status": "ok"}
+curl -sI https://badges.example.com/58/ | grep -i x-cache      # MISS, then HIT on the second call
+```
+
+#### 4. Update
+
+```sh
+cd /opt/progressbar/app && deploy/update.sh
+```
+
+`update.sh` fetches `main` (or an exact commit via `DEPLOY_SHA`), rebuilds the image, restarts the container and waits for `/health`; if the new container never becomes healthy it rolls back to the previous image.
+
+To deploy automatically after `CI` passes on `main`, set the repository variable `SELF_HOST_DEPLOY=true` (and optionally `SELF_HOST_APP_DIR`) and the secrets `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_SSH_KNOWN_HOSTS` (and optionally `DEPLOY_SSH_PORT`). The workflow in `.github/workflows/deploy.yml` then runs `update.sh` over SSH.
+
+#### Without Docker
+
+```sh
+git clone https://github.com/guibranco/progressbar.git && cd progressbar
+python3 -m venv venv && venv/bin/pip install --require-hashes -r requirements.txt
 venv/bin/gunicorn -c gunicorn.conf.py app:app   # http://127.0.0.1:8099/58/
 ```
 
-`GET /health` returns `{"status": "ok"}` for uptime monitors and load balancers. Put the domain behind a CDN/proxy (for example Cloudflare's free plan) to get edge caching and to be able to switch origins without touching the app.
+Use `deploy/systemd/progressbar-gunicorn.service` to run it as a service and `deploy/nginx/` for the reverse proxy.
+
+#### Behind Cloudflare
+
+`GET /health` returns `{"status": "ok"}` for uptime monitors and load balancers. Put the domain behind a CDN/proxy such as Cloudflare's free plan (proxied record, SSL mode **Full (strict)**) to get edge caching and to be able to switch origins — your server, Render or Vercel — without touching the app or the badge URLs.
 
 ---
 
