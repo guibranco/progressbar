@@ -789,3 +789,53 @@ def test_dynamic_json_negative_value_center_origin(mock_fetch, client):
     assert response.status_code == 200
     x, width, _ = _fill(response)
     assert (x, width) == (30, 20)
+
+
+@pytest.mark.parametrize("style", ["thin-rounded", "neo-glass", "minimal-matte"])
+def test_new_styles_render(client, style):
+    response = client.get("/42/", query_string={"title": "progress", "style": style})
+    assert response.status_code == 200
+    assert response.headers["Content-Type"] == "image/svg+xml"
+
+
+def test_thin_rounded_style_is_slim_pill(client):
+    body = client.get("/42/", query_string={"style": "thin-rounded"}).data.decode()
+    assert 'height="14"' in body
+    assert 'rx="7"' in body
+
+
+def test_neo_glass_style_adds_glass_layers(client):
+    body = client.get("/42/", query_string={"style": "neo-glass"}).data.decode()
+    assert "glass_highlight" in body
+    assert 'stroke="#fff"' in body
+    assert 'fill-opacity="0.85"' in body
+
+
+def test_glass_layers_only_on_neo_glass(client):
+    body = client.get("/42/", query_string={"style": "flat"}).data.decode()
+    assert "glass_highlight" not in body
+
+
+@pytest.mark.parametrize(
+    "progress, expected",
+    [(10, "c62828"), (50, "b45309"), (90, "2e7d32")],
+)
+def test_thin_rounded_uses_high_contrast_palette(client, progress, expected):
+    body = client.get(f"/{progress}/", query_string={"style": "thin-rounded"}).data.decode()
+    assert f'fill="#{expected}"' in body
+
+
+@pytest.mark.parametrize(
+    "progress, expected",
+    [(10, "e07a5f"), (50, "f2cc8f"), (90, "81b29a")],
+)
+def test_minimal_matte_uses_muted_palette(client, progress, expected):
+    body = client.get(f"/{progress}/", query_string={"style": "minimal-matte"}).data.decode()
+    assert f'fill="#{expected}"' in body
+
+
+def test_style_radius_override_still_applies(client):
+    body = client.get(
+        "/42/", query_string={"style": "neo-glass", "radius": "2"}
+    ).data.decode()
+    assert 'rx="2"' in body

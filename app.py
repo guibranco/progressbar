@@ -329,31 +329,38 @@ def error_svg_response(message, status=502):
 def is_true(value):
   return value.lower() == 'true'
 
-def get_progress_color(progress, scale):
+
+DEFAULT_PROGRESS_PALETTE = ("d9534f", "f0ad4e", "5cb85c")
+
+
+def get_progress_color(progress, scale, palette=DEFAULT_PROGRESS_PALETTE):
     """Get the color representation of progress based on a scale.
 
     This function calculates the ratio of progress to scale and returns a
-    color code that represents the level of progress. The color codes are
-    defined as follows: - Red ("d9534f") for progress less than 30% - Yellow
-    ("f0ad4e") for progress between 30% and 70% - Green ("5cb85c") for
-    progress of 70% or more.
+    color code that represents the level of progress. With the default
+    palette the color codes are: - Red ("d9534f") for progress less than
+    30% - Yellow ("f0ad4e") for progress between 30% and 70% - Green
+    ("5cb85c") for progress of 70% or more.
 
     Args:
         progress (float): The current progress value.
         scale (float): The maximum scale value to compare against.
+        palette (tuple): ``(low, medium, high)`` hex colors; styles can
+            supply their own (see ``minimal-matte``).
 
     Returns:
         str: A hex color code representing the progress level.
     """
 
+    low, medium, high = palette or DEFAULT_PROGRESS_PALETTE
     ratio = progress/scale
 
     if ratio < 0.3:
-        return "d9534f"
+        return low
     if ratio < 0.7:
-        return "f0ad4e"
+        return medium
 
-    return "5cb85c"
+    return high
 
 def get_style_fields(style):
     """Retrieve style fields based on the specified style type.
@@ -394,6 +401,10 @@ def get_style_fields(style):
             "title_weight": "normal",
             "title_anchor": "left",
             "gradient": True,
+            "progress_opacity": 1,
+            "glass": False,
+            "palette": None,
+            "text_y": None,
         },
         "flat": {
         },
@@ -422,6 +433,41 @@ def get_style_fields(style):
             "font_size": 10,
             "height": 28,
             "title_anchor": "middle",
+            "gradient": False,
+        },
+        # Slim pill: shorter bar, fully rounded ends, smaller text, no 3D effects.
+        "thin-rounded": {
+            "height": 14,
+            "border_radius": 7,
+            "font_size": 9,
+            "text_y": 10,
+            "title_color": "424242",
+            "progress_background": "757575",
+            # Darker than the default palette so 9px white text without a
+            # shadow keeps >= 4.5:1 contrast on the fill and the track.
+            "palette": ("c62828", "b45309", "2e7d32"),
+            "show_shadow": False,
+            "gradient": False,
+        },
+        # Glassmorphism: dark translucent slate, frosted highlight and a hairline
+        # light border.
+        "neo-glass": {
+            "border_radius": 10,
+            "title_color": "1e293b",
+            "progress_background": "334155",
+            "progress_opacity": 0.85,
+            "show_shadow": True,
+            "gradient": False,
+            "glass": True,
+        },
+        # Flat, muted, no shadow or sheen; earthy palette with dark text.
+        "minimal-matte": {
+            "border_radius": 3,
+            "title_color": "d6d3d1",
+            "progress_background": "f5f5f4",
+            "progress_number_color": "292524",
+            "palette": ("e07a5f", "f2cc8f", "81b29a"),
+            "show_shadow": False,
             "gradient": False,
         },
     }
@@ -555,7 +601,8 @@ def get_template_fields(progress):
         clean_req_params["progress_color"] = negative_color
     elif "progress_color" not in clean_req_params:
         clean_req_params["progress_color"] = style.get("progress_color") or default.get(
-            "progress_color", get_progress_color(progress, scale)
+            "progress_color",
+            get_progress_color(progress, scale, style.get("palette")),
         )
 
     origin = parse_progress_origin(request.args.get("origin"))
@@ -576,6 +623,13 @@ def get_template_fields(progress):
     elif style.get("title_anchor") == "middle":
         clean_req_params["title_pos_x"] = clean_req_params.get("title_width", 0) / 2
         clean_req_params["title_pos_y"] = 18
+    else:
+        clean_req_params["title_pos_x"] = 5
+        clean_req_params["title_pos_y"] = 14
+
+    # Styles with a non-standard height set their own text baseline.
+    if style.get("text_y") is not None:
+        clean_req_params["title_pos_y"] = style["text_y"]
 
     return {**style, **clean_req_params}
 

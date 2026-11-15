@@ -56,7 +56,7 @@ Because the domain is on Cloudflare, switching origins (Render ↔ Vercel ↔ a 
 | `show_text`             | Whether to display or hide the progress text                               | `true`                |
 | `show_shadow`           | Whether to draw the text shadow                                            | `true`                |
 | `radius`                | Corner radius in pixels                                                    | `4`                   |
-| `style`                 | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge` | `default`             |
+| `style`                 | The style. One of: `default`, `flat`, `square`, `plastic`, `for-the-badge`, `thin-rounded`, `neo-glass`, `minimal-matte` | `default`             |
 | `origin`                | Where the bar fills from: `left`, `center` (alias `middle`) or `right`. With `center`, zero is the middle of the bar — positive values grow right and negative values grow left (like Excel data bars) | `left` |
 | `negative_color`        | Color of the bar for negative values (hex code without `#`). Overrides `progress_color` and the style color when the value is below zero | Depends on percentage |
 
@@ -111,9 +111,9 @@ We currently support:
 | 🔲 **square**         | ![Progress](https://progress-bar.xyz/100/?style=square)        | [https://progress-bar.xyz/100/?style=square](https://progress-bar.xyz/100/?style=square)               |
 | 🛡️ **plastic**        | ![Progress](https://progress-bar.xyz/100/?style=plastic)       | [https://progress-bar.xyz/100/?style=plastic](https://progress-bar.xyz/100/?style=plastic)             |
 | 🔖 **for-the-badge**  | ![Progress](https://progress-bar.xyz/100/?style=for-the-badge) | [https://progress-bar.xyz/100/?style=for-the-badge](https://progress-bar.xyz/100/?style=for-the-badge) |
-| 🎭 **thin-rounded** (WIP) | ![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
-| 🪞 **neo-glass** (WIP) | ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
-| 🎨 **minimal-matte** (WIP) | ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
+| 🎭 **thin-rounded** | ![Progress](https://progress-bar.xyz/100/?style=thin-rounded)  | [https://progress-bar.xyz/100/?style=thin-rounded](https://progress-bar.xyz/100/?style=thin-rounded)   |
+| 🪞 **neo-glass** | ![Progress](https://progress-bar.xyz/100/?style=neo-glass)     | [https://progress-bar.xyz/100/?style=neo-glass](https://progress-bar.xyz/100/?style=neo-glass)         |
+| 🎨 **minimal-matte** | ![Progress](https://progress-bar.xyz/100/?style=minimal-matte) | [https://progress-bar.xyz/100/?style=minimal-matte](https://progress-bar.xyz/100/?style=minimal-matte) |
 
 ---
 
