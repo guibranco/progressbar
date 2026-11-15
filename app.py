@@ -4,6 +4,7 @@ import json
 import os
 import re
 import socket
+from datetime import datetime, timedelta, timezone
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -713,8 +714,55 @@ def favicon():
 # Only the homepage (a redirect to the GitHub repo) is left crawlable; "$"
 # anchors the rule to "/" exactly (supported by Google, Bing and others).
 # GitHub's camo proxy and browsers fetching embedded badges ignore robots.txt.
-ROBOTS_TXT = "User-agent: *\nAllow: /$\nDisallow: /\n"
+ROBOTS_TXT = (
+  "User-agent: *\nAllow: /$\nAllow: /.well-known/security.txt\nDisallow: /\n"
+)
 ROBOTS_CACHE_SECONDS = 30 * DAY_SECONDS
+
+# security.txt (RFC 9116), with the fields Cloudflare's generator asks for:
+# Contact (required), Expires (required, under a year away), Policy,
+# Preferred-Languages and Canonical. Like Cloudflare's Worker, Expires is
+# computed at request time so the file can never go stale; it is pinned to
+# midnight UTC so the body only changes once a day and stays cacheable.
+# Self-hosted instances on another domain can override every field.
+SECURITY_TXT_CONTACTS = tuple(
+  contact.strip()
+  for contact in os.environ.get(
+    "PROGRESSBAR_SECURITY_CONTACT",
+    "mailto:opensource-security@straccini.com,"
+    "https://github.com/guibranco/progressbar/security/advisories/new",
+  ).split(",")
+  if contact.strip()
+)
+SECURITY_TXT_POLICY = os.environ.get(
+  "PROGRESSBAR_SECURITY_POLICY",
+  "https://github.com/guibranco/progressbar/security/policy",
+)
+SECURITY_TXT_CANONICAL = os.environ.get(
+  "PROGRESSBAR_SECURITY_CANONICAL",
+  "https://progress-bar.xyz/.well-known/security.txt",
+)
+SECURITY_TXT_LANGUAGES = os.environ.get("PROGRESSBAR_SECURITY_LANGUAGES", "en, pt")
+SECURITY_TXT_EXPIRES_DAYS = 180
+SECURITY_TXT_CACHE_SECONDS = DAY_SECONDS
+
+
+def build_security_txt(now=None):
+  """Render the RFC 9116 security.txt body; Expires is 180 days from today."""
+  now = now or datetime.now(timezone.utc)
+  midnight = now.astimezone(timezone.utc).replace(
+    hour=0, minute=0, second=0, microsecond=0
+  )
+  expires = midnight + timedelta(days=SECURITY_TXT_EXPIRES_DAYS)
+  lines = ["Contact: " + contact for contact in SECURITY_TXT_CONTACTS]
+  lines.append("Expires: " + expires.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+  if SECURITY_TXT_POLICY:
+    lines.append("Policy: " + SECURITY_TXT_POLICY)
+  if SECURITY_TXT_LANGUAGES:
+    lines.append("Preferred-Languages: " + SECURITY_TXT_LANGUAGES)
+  if SECURITY_TXT_CANONICAL:
+    lines.append("Canonical: " + SECURITY_TXT_CANONICAL)
+  return "\n".join(lines) + "\n"
 
 
 @app.route("/robots.txt", methods=["GET"])
@@ -723,6 +771,21 @@ def robots_txt():
     response = make_response(ROBOTS_TXT)
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
     return _set_cache_control(response, ROBOTS_CACHE_SECONDS)
+
+
+@app.route("/.well-known/security.txt", methods=["GET"])
+def security_txt():
+    """Tell security researchers how to report vulnerabilities (RFC 9116)."""
+    response = make_response(build_security_txt())
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+    return _set_cache_control(response, SECURITY_TXT_CACHE_SECONDS)
+
+
+@app.route("/security.txt", methods=["GET"])
+def legacy_security_txt():
+    """RFC 9116 section 3: the legacy top-level path redirects to /.well-known/."""
+    response = redirect("/.well-known/security.txt", code=301)
+    return _set_cache_control(response, SECURITY_TXT_CACHE_SECONDS)
 
 
 @app.route("/")

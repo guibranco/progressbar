@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
 from urllib.error import URLError
 
@@ -13,6 +14,7 @@ from app import (
     STALE_WHILE_REVALIDATE_SECONDS,
     STATIC_CACHE_SECONDS,
     app,
+    build_security_txt,
     cache_control_value,
     fetch_json_document,
     get_fill_geometry,
@@ -89,8 +91,50 @@ def test_robots_txt(client):
     response = client.get("/robots.txt")
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
-    assert response.get_data(as_text=True) == "User-agent: *\nAllow: /$\nDisallow: /\n"
+    assert response.get_data(as_text=True) == (
+        "User-agent: *\nAllow: /$\nAllow: /.well-known/security.txt\nDisallow: /\n"
+    )
     assert "max-age=2592000" in response.headers["Cache-Control"]
+
+
+def test_security_txt(client):
+    response = client.get("/.well-known/security.txt")
+    assert response.status_code == 200
+    assert response.mimetype == "text/plain"
+    assert response.mimetype_params.get("charset") == "utf-8"
+    assert response.headers["Cache-Control"] == "public, max-age=86400, s-maxage=86400"
+
+    body = response.get_data(as_text=True)
+    fields = [line.split(": ", 1) for line in body.splitlines()]
+    names = [name for name, _ in fields]
+    values = dict(fields)
+    assert names.count("Contact") == 2
+    assert "Contact: mailto:opensource-security@straccini.com" in body
+    assert (
+        "Contact: https://github.com/guibranco/progressbar/security/advisories/new"
+        in body
+    )
+    assert names.count("Expires") == 1  # RFC 9116: exactly once
+    assert values["Policy"] == "https://github.com/guibranco/progressbar/security/policy"
+    assert values["Preferred-Languages"] == "en, pt"
+    assert values["Canonical"] == "https://progress-bar.xyz/.well-known/security.txt"
+
+    expires = datetime.strptime(values["Expires"], "%Y-%m-%dT%H:%M:%S.000Z").replace(
+        tzinfo=timezone.utc
+    )
+    remaining = expires - datetime.now(timezone.utc)
+    assert timedelta(days=179) < remaining <= timedelta(days=180)  # under a year
+
+
+def test_security_txt_expires_is_pinned_to_midnight():
+    now = datetime(2026, 11, 15, 18, 33, 7, tzinfo=timezone.utc)
+    assert "Expires: 2027-05-14T00:00:00.000Z\n" in build_security_txt(now)
+
+
+def test_legacy_security_txt_redirects(client):
+    response = client.get("/security.txt")
+    assert response.status_code == 301
+    assert response.headers["Location"] == "/.well-known/security.txt"
 
 
 def test_env_int_parsing(monkeypatch):

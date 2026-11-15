@@ -146,6 +146,7 @@ Badges are fetched by GitHub's image proxy (camo), browsers and CDNs on every RE
 | `/dynamic/json/`  | `public, max-age=300, s-maxage=300` by default; override per request with `cache=` |
 | `/favicon.ico`    | `public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800` (30 days) |
 | `/robots.txt`     | `public, max-age=2592000, s-maxage=2592000` (30 days)                             |
+| `/.well-known/security.txt` | `public, max-age=86400, s-maxage=86400` (1 day — its `Expires` field moves forward daily) |
 | Errors, `/health` | `no-store`                                                                        |
 
 The two defaults can be changed per deployment with the environment variables `PROGRESSBAR_STATIC_CACHE_SECONDS` (0–2592000, default 7 days) and `PROGRESSBAR_DYNAMIC_CACHE_SECONDS` (0–86400). Keep in mind that changes to a badge's look can take up to the configured static TTL (7 days by default, up to 30 days if `PROGRESSBAR_STATIC_CACHE_SECONDS` is raised) to show up in READMEs — and a CDN that honours `stale-while-revalidate` may keep serving the previous version for up to another 7 days while it refreshes the entry in the background.
@@ -239,6 +240,12 @@ Use `deploy/systemd/progressbar-gunicorn.service` to run it as a service and `de
 #### Behind Cloudflare
 
 `GET /health` returns `{"status": "ok"}` for uptime monitors and load balancers. Put the domain behind a CDN/proxy such as Cloudflare's free plan (proxied record, SSL mode **Full (strict)**) to get edge caching and to be able to switch origins — your server, Render or Vercel — without touching the app or the badge URLs.
+
+#### 🔐 security.txt
+
+The app serves an [RFC 9116](https://www.rfc-editor.org/rfc/rfc9116) [`/.well-known/security.txt`](https://progress-bar.xyz/.well-known/security.txt) (and redirects the legacy `/security.txt` to it) with the fields Cloudflare's security.txt generator asks for: `Contact`, `Expires`, `Policy`, `Preferred-Languages` and `Canonical`. `Expires` is always 180 days from the current day, so the file never goes stale and needs no yearly update. Because the app answers this path itself, leave Cloudflare's own **Security.txt** setting (Security → Settings) disabled for the zone, or Cloudflare will serve its version instead.
+
+Running your own instance on another domain? Point the fields at your own contacts with `PROGRESSBAR_SECURITY_CONTACT` (comma-separated `mailto:`/`https://` URIs), `PROGRESSBAR_SECURITY_POLICY`, `PROGRESSBAR_SECURITY_CANONICAL` and `PROGRESSBAR_SECURITY_LANGUAGES` (see [`deploy/env.example`](deploy/env.example)); set any of the last three to an empty value to omit that field.
 
 ---
 
