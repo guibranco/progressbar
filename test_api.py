@@ -89,8 +89,8 @@ def test_robots_txt(client):
     response = client.get("/robots.txt")
     assert response.status_code == 200
     assert response.mimetype == "text/plain"
-    assert response.get_data(as_text=True) == "User-agent: *\nDisallow: /\n"
-    assert "max-age=86400" in response.headers["Cache-Control"]
+    assert response.get_data(as_text=True) == "User-agent: *\nAllow: /$\nDisallow: /\n"
+    assert "max-age=2592000" in response.headers["Cache-Control"]
 
 
 def test_env_int_parsing(monkeypatch):

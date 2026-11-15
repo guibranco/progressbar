@@ -655,10 +655,12 @@ def favicon():
 
 
 # Badges are only useful embedded in READMEs, and /dynamic/json/ makes an
-# outbound request per hit, so crawlers get nothing of value from any route.
+# outbound request per hit, so crawlers get nothing of value from badge routes.
+# Only the homepage (a redirect to the GitHub repo) is left crawlable; "$"
+# anchors the rule to "/" exactly (supported by Google, Bing and others).
 # GitHub's camo proxy and browsers fetching embedded badges ignore robots.txt.
-ROBOTS_TXT = "User-agent: *\nDisallow: /\n"
-ROBOTS_CACHE_SECONDS = DAY_SECONDS
+ROBOTS_TXT = "User-agent: *\nAllow: /$\nDisallow: /\n"
+ROBOTS_CACHE_SECONDS = 30 * DAY_SECONDS
 
 
 @app.route("/robots.txt", methods=["GET"])
