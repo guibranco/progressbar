@@ -26,15 +26,15 @@
   
   <!-- Progress fill with the same border radius to avoid sharp corners -->
   {% if origin == 'left' %}
-  <rect rx="{{ border_radius }}" x="{{ fill_x }}" width="{{ fill_width }}" height="100%" fill="#{{ progress_color }}" />
+  <rect rx="{{ border_radius }}" x="{{ fill_x }}" width="{{ fill_width }}" height="100%" fill="#{{ progress_color }}" fill-opacity="{{ progress_opacity }}" />
   {% else %}
   <!-- Square inner end at the axis; the outer end is rounded by the bar's clip path -->
-  <rect rx="0" x="{{ fill_x }}" width="{{ fill_width }}" height="100%" fill="#{{ progress_color }}" clip-path="url(#progress_clip)" />
+  <rect rx="0" x="{{ fill_x }}" width="{{ fill_width }}" height="100%" fill="#{{ progress_color }}" fill-opacity="{{ progress_opacity }}" clip-path="url(#progress_clip)" />
   {% endif %}
 
   {% if title %}
     <!-- Squares off the join between the title and the bar -->
-    <rect x="{{ title_width }}" y="0" width="4" height="100%" fill="#{{ progress_color if origin == 'left' or (fill_width > 0 and fill_x <= title_width) else progress_background }}" />
+    <rect x="{{ title_width }}" y="0" width="4" height="100%" {% if origin == 'left' or (fill_width > 0 and fill_x <= title_width) %}fill="#{{ progress_color }}" fill-opacity="{{ progress_opacity }}"{% else %}fill="#{{ progress_background }}"{% endif %} />
   {% endif %}
 
   {% if origin == 'center' %}
@@ -73,6 +73,18 @@
       <stop offset="100%" stop-color="rgba(0,0,0,0.2)" />
     </linearGradient>
     <rect x="{{ title_width }}" y="9" width="{{ progress_width - 1 }}" height="11" fill="url(#progress_shadow)" clip-path="url(#progress_clip)" />
+  {% endif %}
+
+  {% if glass %}
+    <!-- Frosted highlight over the top half and a hairline light border (neo-glass) -->
+    <linearGradient id="glass_highlight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity=".08"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".12"/>
+    </linearGradient>
+    <rect rx="{{ border_radius }}" width="{{ title_width + progress_width }}" height="100%" fill="url(#glass_highlight)" clip-path="url(#clip)" />
+    <rect rx="{{ [(border_radius | float) - 0.5, 0] | max }}" x="0.5" y="0.5" width="{{ title_width + progress_width - 1 }}" height="{{ height - 1 }}" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1" />
   {% endif %}
 
   {% if title %}
