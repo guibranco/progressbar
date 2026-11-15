@@ -654,6 +654,21 @@ def favicon():
     )
 
 
+# Badges are only useful embedded in READMEs, and /dynamic/json/ makes an
+# outbound request per hit, so crawlers get nothing of value from any route.
+# GitHub's camo proxy and browsers fetching embedded badges ignore robots.txt.
+ROBOTS_TXT = "User-agent: *\nDisallow: /\n"
+ROBOTS_CACHE_SECONDS = DAY_SECONDS
+
+
+@app.route("/robots.txt", methods=["GET"])
+def robots_txt():
+    """Ask crawlers not to index badge URLs (an unbounded query-string space)."""
+    response = make_response(ROBOTS_TXT)
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+    return _set_cache_control(response, ROBOTS_CACHE_SECONDS)
+
+
 @app.route("/")
 def redirect_to_github():
     return redirect("https://github.com/guibranco/progressbar", code=302)

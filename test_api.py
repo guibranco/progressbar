@@ -85,6 +85,14 @@ def test_favicon(client):
     assert "max-age=2592000" in response.headers["Cache-Control"]
 
 
+def test_robots_txt(client):
+    response = client.get("/robots.txt")
+    assert response.status_code == 200
+    assert response.mimetype == "text/plain"
+    assert response.get_data(as_text=True) == "User-agent: *\nDisallow: /\n"
+    assert "max-age=86400" in response.headers["Cache-Control"]
+
+
 def test_env_int_parsing(monkeypatch):
     monkeypatch.setenv("PROGRESSBAR_TEST_INT", "900")
     assert app_module._env_int("PROGRESSBAR_TEST_INT", 5) == 900
