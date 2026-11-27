@@ -28,7 +28,7 @@ jobs:
 
             - name: Determine Version
               id: gitversion
-              uses: gittools/actions/gitversion/execute@220647997b450f3e9364b6cf6a357197f17d924b # v4
+              uses: gittools/actions/gitversion/execute@389fe43e6b0189b98c40c43553070ac029304635 # v4
 
             - name: Set up Python
               uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
